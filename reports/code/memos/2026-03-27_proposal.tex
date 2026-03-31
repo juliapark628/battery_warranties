@@ -1,0 +1,289 @@
+\documentclass[12pt]{article}
+
+% ── Packages ──────────────────────────────────────────────────────────────────
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}               % Times New Roman text + matching math font
+\usepackage{microtype}
+\usepackage{parskip}                % no paragraph indent; space between paras
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+% footmisc removed for compatibility
+\usepackage{eurosym}                % \euro symbol
+
+% ── Spacing & layout ──────────────────────────────────────────────────────────
+\doublespacing
+\setlength{\parindent}{0.5in}
+\setlength{\parskip}{0pt}
+
+% ── Section heading style ─────────────────────────────────────────────────────
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries\itshape}{\thesubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{18pt}{6pt}
+\titlespacing*{\subsection}{0pt}{12pt}{4pt}
+
+% ── Hyperref setup ────────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = black,
+  citecolor  = black,
+  urlcolor   = black
+}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── Title & Abstract ──────────────────────────────────────────────────────────
+\begin{center}
+  {\LARGE\bfseries Grid-Scale Battery Dispatch Distortions\\[6pt]
+    Due to Manufacturer Warranties}\\[1cm]
+  {\large\itshape Julia Park}\\[0.4cm]
+  {\large March 2026}
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}{\bfseries Abstract}\end{center}
+\begin{quote}
+\noindent Grid-scale battery energy storage systems are valued for their flexibility in electricity markets, yet performance warranties issued by Original Equipment Manufacturers impose binding operational restrictions---cycle frequency limits, state-of-charge requirements, and depth-of-discharge constraints---that may distort dispatch away from profit-maximizing and socially optimal behavior. This paper proposes the first academic study of warranty-induced dispatch distortions. To do this, I plan to link a dataset of Power Purchase Agreement (PPA)-disclosed warranty terms for PV-plus-battery hybrid plants (from the LBNL Berkeley Lab dataset) to high-frequency resource-level dispatch data from ERCOT's 60-Day SCED Disclosure Report. The proposed empirical analysis proceeds in three steps: descriptive comparisons of dispatch behavior across warranty types, a difference-in-differences design exploiting manufacturer warranty policy changes, and a numerical battery dispatch simulation model to bound welfare magnitudes. Welfare losses would be decomposed into foregone arbitrage profits, lost ancillary service provision, and the environmental externality from increased fossil peaker dispatch. 
+\end{quote}
+
+\vspace{1cm}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Introduction}
+
+Grid-scale batteries have rapidly expanded recently in most electricity markets. Installed battery capacity in the United States exceeded 26 gigawatts by early 2025, with ERCOT alone hosting approximately 3.2 GW \citep{reynolds2025}. The primary economic rationale for this investment is flexibility: unlike intermittent renewables that require wind or solar resources, or fossil-fuel generators subject to substantial startup costs, batteries can respond to grid conditions within seconds. This flexibility makes battery technologies uniquely valuable for energy arbitrage and ancillary services provision.
+
+However, in practice, batteries do not operate unconstrained in most markets. Performance warranties issued by Original Equipment Manufacturers (OEMs)---typically covering 15 to 20 years of system lifetime---impose binding operational restrictions on battery cycling behavior. These commonly include caps on the number of charge-discharge cycles per year or per day, state-of-charge (SOC) requirements, depth-of-discharge (DoD) limitations, and resting period mandates. While designed to manage lithium-ion cell degradation, the design of these contractual constraints may induce dispatch patterns that deviate substantially from the profit-maximizing or socially optimal outcome.
+
+This project seeks to answer: \textit{how do cycling restrictions in grid-scale battery performance warranties distort dispatch away from profit-maximizing and socially optimal behavior?}  According to industry analyst BlackVolt, batteries earn a disproportionate share of revenue on a small number of high-price days, typically associated with unforeseeable supply disruptions. Warranties designed with rigid cycle restrictions prevent batteries from cycling intensively on  those high-value days, either because the daily or annual cycle budget is already partially depleted or because operators face a forward-looking incentive to conserve cycles in anticipation of future price spikes. 
+
+In this project, I hope to make three contributions. First, I will document and categorize operational restrictions embedded in performance warranties using PPA-disclosed warranty terms (from the LBNL Berkeley Lab utility-scale solar dataset). Second, I will join this restriction data to battery-level dispatch records from ERCOT's 60-Day SCED Disclosure Report and describe the relationship between warranty restrictiveness on dispatch behavior, exploiting cross-sectional variation in manufacturer warranty terms and temporal variation from manufacturers' shifts toward flexible warranty structures. Third, I will quantify the welfare cost, decomposing losses into foregone arbitrage profits, lost ancillary service provision, and environmental externalities from increased fossil dispatch.
+
+To do this, I will primarily be studying the Texas electricity market, ERCOT. ERCOT is a particularly well-suited laboratory for this analysis. Texas has deployed more grid-scale battery capacity than any other state, with approximately 3.2 GW installed by early 2025 and substantial additional capacity under construction \citep{reynolds2025}. As a fully deregulated energy-only market, ERCOT exposes batteries to relatively undistorted real-time price signals, meaning that gaps between observed and optimal dispatch are more directly attributable to operational constraints than to market structure distortions. ERCOT also exhibits extreme price volatility---including the 2021 Winter Storm Uri episode and recurring summer scarcity events---which creates high-value dispatch opportunities that make warranty-imposed restrictions especially costly. Finally, ERCOT's 60-Day SCED disclosure requirements provide unusually granular public data on individual battery dispatch decisions, making it one of the few markets where detailed empirical analysis at the resource level is feasible.
+
+
+My hope is that this project will contribute to our understanding of battery dispatch decisions and constraints in practice, and of the benefits of flexible warranty design in certain markets.
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Institutional Background}
+
+\subsection{Types of Battery Warranties}
+
+There are two common battery warranties: Commercial warranties and Performance warranties. Commercial warranties cover defects and component failures at the beginning of system life. Performance warranties---the focus of this paper---guarantee that the storage system will maintain specific performance standards over 15 to 20 years. 
+
+Performance warranties commonly take three forms. 
+\begin{itemize}
+    \item \textit{End-of-life State of Health (SoH) warranties} promise a minimum capacity retention (typically 70--80\% of nameplate) at the warranty's conclusion, conditional on adherence to specified operating conditions.
+    \item  \textit{Annual SoH warranties} impose a maximum yearly degradation rate with corresponding annual compliance requirements.
+    \item \textit{Penalty-based warranties} adjust the guaranteed SoH according to a predefined formula if the system is operated outside specified parameters, offering the most flexibility. 
+\end{itemize}
+
+The industry trend has been movement from the first two more rigid warranty types toward the more flexible third warranty type. This is driven directly by the economics of battery revenue: batteries earn outsized returns on a few high-value days rather than steady low-margin daily cycling, and rigid restrictions prevent operators from responding maximally precisely when it matters most.
+
+\subsection{Operational Restrictions}
+
+The most economically significant operational restrictions fall into five categories. 
+\begin{itemize}
+    \item \textit{Cycle frequency limits} cap the number of full charge-discharge cycles per day or year; from available industry sources, limits appear to cluster around 1 to 1.5 cycles per day (approximately 365--548 cycles per year).
+    \item \textit{State-of-charge requirements} constrain the annual average SOC (commonly below 50\%), which would prevent operators from holding the battery fully charged while awaiting price spikes.
+    \item \textit{Depth-of-discharge limitations} prevent full cycling of the battery's nominal capacity on each dispatch event.
+    \item \textit{C-rate caps} limit the maximum power-to-capacity ratio; a 0.25C cap on a 100 MWh battery would limit power to 25 MW, potentially constraining ancillary services provision and response to sudden price spikes. 
+    \item Resting period requirements require a certain amount of battery inactivity after a cycle, to give the battery an opportunity to regulate its temperature.
+\end{itemize}
+
+Over time, as battery monitoring technologies become better and the market needs of batteries are better understood, warranties for a battery can change to become more flexible. For example, Trina Storage's pre-2025 warranty reportedly permitted four full-power cycles per day, while its revised 2025 warranty eliminated the cycle count in favor of a continuous 0.25C charge/discharge rate cap---illustrating how warranty structures can change even for a given battery resource.  
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Literature Review and Positioning}
+
+Two strains of literature are relevant to this paper: the economics of electricity storage and arbitrage, and the theory and empirics of warranty contracts. I will also rely on literature from the engineering science of battery degradation for some of my analysis.
+
+\subsection{Electricity Storage Arbitrage}
+
+The literature on electricity storage economics studies how storage facilities optimize dispatch, how their participation affects market prices and social welfare, and what frictions prevent storage from realizing its theoretical value. Prior work in this strain has focused mainly on market structure, imperfect price forecasting, and physical degradation costs as sources of dispatch inefficiency.
+
+The most closely related recent paper is \citet{butters2025}, which develops and estimates a dynamic market equilibrium model of battery dispatch in CAISO, finding that the first 5,000 MWh of storage reduces wholesale prices by 5.6\%. Their framework---solving a dynamic programming problem subject to physical degradation costs---provides a potential starting point for my own battery bidding simulation models. Their degradation costs are physical and technologically determined; but for this project, since warranty cycling limits are contractual and may be substantially more restrictive than physical limits, our constraints may be even more rigid. \citet{lamp2022} document actual battery dispatch in CAISO during 2018--2019 and find behavior only partially consistent with optimal arbitrage, attributing deviations to imperfect forecasting and strategic behavior but not observing warranty terms; this project would examine whether warranty terms explain part of the residual. \citet{reynolds2025} documents that 66\% of ERCOT storage is classified for arbitrage and 44\% for ancillary services (with the overlap suggesting some batteries are used for both), providing useful context for the welfare that batteries provide. \citet{denholm2018} provide estimates of the storage capacity required to meet peaking demand in California under increasing solar penetration, providing useful context for situating the social stakes of dispatch inefficiency.
+
+\subsection{Contract Theory and Warranties}
+
+The economics literature on warranty contracts studies how warranty terms emerge from bilateral contracting, how they allocate risk and govern moral hazard on both sides of the relationship, and what their aggregate consequences are. This strain has focused primarily on consumer durable goods---cars, appliances, electronics---where buyer usage behavior affects product longevity. The battery setting shares this basic structure but differs in two ways. First, the buyer's dispatch decisions affect wholesale electricity market outcomes, so warranty design has potential social welfare consequences beyond the battery owner and manufacturer. Second, unlike most consumer goods that degrade primarily along one or two dimensions (e.g. mileage and number of accidents for cars), batteries degrade via a variety of different types of behaviors (e.g. depth of discharge vs number of cycles vs average SoC, etc.), and warranty terms may vary in their restrictiveness across these behavior types---often depending on how easily each behavior type is monitored by the manufacturer.
+
+ \citet{emons1988}  shows that under asymmetric information about product quality, warranties serve as both insurance and quality signals, and that moral hazard on the buyer side leads to excessive product use; warranty cycling restrictions are one instrument manufacturers use to manage that incentive. \citet{emons1989} examines the optimal duration of warranties and shows that longer warranties require more intensive usage monitoring to remain incentive-compatible---directly relevant to the 15--20 year time horizons of battery performance warranties, over which monitoring of cumulative cycle counts is both technically feasible and contractually specified. 
+
+ The only paper looking at grid-scale battery warranties is \citet{liuwang2025}, which conducts an industry review of  potentially optimal battery warranty designs from the manufacturer's perspective; this project aims to complement their analysis by examining the market-level implications of different warranty terms.
+
+\subsection{Battery Degradation}
+
+The engineering literature on battery degradation provides the physical foundation for the economic analysis. Understanding the mapping from cycling behavior to capacity loss is necessary both to calibrate any simulations and to assess whether observed warranty restrictions are more constraining than physical degradation science alone would require.
+
+\citet{xu2018} provide the most widely used semi-empirical degradation model, separating aging into calendar aging (driven by temperature and state of charge level) and cycle aging (driven by depth of discharge, C-rate, and cumulative throughput). 
+
+\citet{attia2022} document non-linear aging trajectories in lithium-ion batteries, including ``capacity knees''---abrupt inflection points where the degradation rate accelerates---implying that simple linear throughput approximations may misstate marginal degradation costs at different stages of battery life. This non-linearity supports conservative warranty design for batteries near a knee threshold, but also implies that batteries operating well below the knee face lower marginal degradation costs than linear models suggest. 
+
+\subsection{Contribution}
+
+Unlike consumer products studied in the warranty literature, grid-scale batteries have multiple contractable dimensions of operational behavior---cycle frequency, depth of discharge, C-rate, and state of charge---and these choices have potential consequences for electricity market outcomes and welfare. To my knowledge, no existing economics paper has systematically examined the dispatch effects or welfare costs of warranty cycling restrictions. This project aims to provide that analysis by combining tools from energy economics, contract theory, and battery engineering.
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Data}
+
+\subsection{LBNL Berkeley Lab PPA Dataset}
+
+The primary source of warranty term variation is the LBNL's collection of approximately 105 PV-plus-battery hybrid plant contracts with public PPAs. \citet{seel2021} document operational restrictions---including cycle limits, SOC requirements, and DoD restrictions---disclosed as conditions of the storage performance warranty. Because PPAs are public documents filed with state utility commissions or the Federal Energy Regulatory Commission (FERC), the warranty terms they contain represent the most transparent available source of cross-sectional variation in operational restrictions across battery installations.
+
+
+
+
+
+\subsection{ERCOT SCED Disclosure Data}
+
+A key source of battery behavior data is ERCOT's 60-Day Security Constrained Economic Dispatch (SCED) Disclosure Report, which contains resource-level, 5-minute-interval dispatch data for every generator and energy storage resource in ERCOT since January 2011. Key variables include telemetered output and load (actual MW), submitted energy offer curves (full price-quantity pairs), and ancillary service awards across all ERCOT products. This data uniquely releases the bids that resources submit for both energy and ancillary services, which could be a useful outcome variable in some of our descriptive analysis. 
+
+\subsection{EIA Form 860, 923}
+
+I plan to link the ERCOT SCED dataset to the PPA dataset via EIA Form 860, which provides plant-level identification including name, operator, location, capacity, and technology type for all utility-scale US generation facilities.
+
+\subsection{Potential industry sources}
+Industry outreach to companies specializing in adaptive battery warranties---including NEC Energy Solutions and IronGrid---may provide structured warranty term data for standalone ERCOT storage units not covered by the LBNL PPA sample. They may also be able to provide examples of batteries that modified their warranties over time. 
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Proposed empirical strategies}
+
+Data collection is currently in progress; I have not yet run any analyses. The following describes the primary empirical exercises I plan to undertake once the data are assembled.
+
+\subsection{Descriptive comparisons across warranty type} As a first step, I plan to go through the PPA contracts to describe common warranty structures, terms, and constraints more systematically than the industry sources that currently exist. Based on what I observe, I will categorize the batteries into different warranty types for the subsequent empirical analysis.
+
+I will then compare the distribution of daily cycles, ancillary service participation rates, and discharge response to unexpected price spikes---defined as settlement point price spikes exceeding three standard deviations above the historical mean for that hour, associated with unforecasted supply outages rather than weather-driven demand shocks that would already be in operators' forecasts---across batteries with more versus less restrictive warranty terms identified in the LBNL dataset. I predict that cycle-restricted batteries would exhibit lower discharge intensity during unexpected price spikes and lower ancillary service award rates relative to physical capacity, with the effect concentrated later in the year when cycle budgets are most depleted. These non-causal descriptive patterns would help me assess the variation in the data before proceeding to the quasi-experimental and simulation analyses.
+
+The central identification challenge to causal analysis is that batteries with more restrictive warranties may differ from those with less restrictive ones in their underlying technology, ownership, vintage, or market position. For instance, larger or more sophisticated operators may negotiate more flexible warranty terms while also dispatching more efficiently for reasons unrelated to warranty design. The descriptive analysis will document these potential confounds systematically. The DiD design (described in next section) partially addresses them by comparing dispatch behavior for the same battery before and after a warranty policy change, absorbing time-invariant differences across installations, but this will depend on gaining access to the right industry data.
+
+
+
+\subsection{Difference-in-Differences Exploiting Warranty Policy Changes}
+
+Several manufacturers shifted from rigid to flexible warranty structures between 2023 and 2025. For example, Trina Storage's early-2025 adoption of rolling-average flexible warranties---replacing a fixed-cycle-count regime with a continuous C-rate cap---is a potential candidate treatment event. If I can work with an energy solutions firm (such as NEC or IronGrid) that offers a service designing more complex and flexible battery warranties, perhaps they would be willing to give me a list of batteries that changed their warranty during operation.
+
+A difference-in-differences design compares cycling intensity, ancillary service participation, and extreme-event dispatch response for batteries that revised their warranty terms (treated) against batteries from manufacturers that did not revise their warranty terms (controls), before and after the policy change. The key identifying assumption is parallel pre-treatment trends in dispatch behavior. If that does not hold, even just an event-study for a battery comparing their dispatch behavior before and after a warranty revision could be interesting.
+
+\subsection{Battery behavior simulation model}
+To get a rough sense of welfare magnitudes, I plan to solve the optimal dispatch problem (using an algorithm that predicts prices given, say previous period price and day-ahead price, for example) under four regimes: 
+\begin{itemize}
+    \item unconstrained (physical degradation costs only, calibrated from \citealt{xu2018})
+    \item 1-cycle-per-day limit
+    \item annual throughput cap equivalent to 365 cycles
+    \item a 0.25C power cap
+\end{itemize}
+
+This would produce an upper-bound estimate of the profit loss attributable to each type of warranty restriction, under the assumption that operators would otherwise dispatch optimally. 
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Potential Welfare Analysis}
+
+To think through the welfare implications, I would decompose the social cost of warranty-induced distortions into three components. 
+\begin{itemize}
+    \item \textit{Foregone arbitrage profits}---the private cost to the battery operator---would be computed per SCED interval as the LMP times the quantity difference between unconstrained-optimal and warranty-constrained dispatch, minus any degradation costs calculated from models from the engineering literature. 
+    \item \textit{Lost ancillary services value}, capturing the shadow price of frequency regulation and spinning reserve capacity withheld due to warranty restrictions.  ERCOT ancillary service market clearing prices are directly observable from the SCED data, providing market-based valuations for foregone regulatory services. Because frequency regulation requires precisely the rapid cycling that cycle-count warranties restrict, and ancillary services account for a substantial share of battery revenues in ERCOT, I expect this component to be quantitatively significant---though determining its magnitude is an empirical question.
+    \item \textit{Environmental externalities} would arise if constrained batteries force greater reliance on fossil fuel peakers. Following the merit-order counterfactual approach of \citet{cicala2022} and \citet{gonzales2023}, I would compute the marginal emissions rate of the relevant fossil resource during periods when batteries would have dispatched under the unconstrained optimum but did not, and multiply by the social cost of carbon. 
+\end{itemize}
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Conclusion}
+
+This paper proposes the first systematic academic study of warranty-induced dispatch distortions in grid-scale battery energy storage. My central hypothesis is that contractual frictions---not only physical degradation costs or market power---represent a first-order barrier to efficient battery dispatch, and that these frictions impose social costs beyond the private losses borne by battery operators.
+
+Rigid warranty structures may systematically undermine the flexibility value that justifies investment in grid-scale storage. The hope is that this project will contribute to our understanding of battery dispatch decisions and constraints in practice, and of the benefits of flexible warranty design in certain markets.
+
+
+% ─────────────────────────────────────────────────────────────────────────────
+\newpage
+\begin{singlespace}
+\bibliographystyle{aer}
+\begin{thebibliography}{99}
+
+\bibitem[Attia et~al.(2022)]{attia2022}
+  Attia, P.M., et~al. (2022).
+  \newblock Review---`Knees' in lithium-ion battery aging trajectories.
+  \newblock \textit{Journal of The Electrochemical Society} 169: 060517.
+
+\bibitem[Butters et~al.(2025)]{butters2025}
+  Butters, R.A., J.~Dorsey, and G.~Gowrisankaran (2025).
+  \newblock Soaking up the sun: Battery investment, renewable energy, and market
+    equilibrium.
+  \newblock \textit{Econometrica} 93(3): 891--927.
+
+\bibitem[Cicala(2022)]{cicala2022}
+  Cicala, S. (2022).
+  \newblock Imperfect markets versus imperfect regulation in US electricity
+    generation.
+  \newblock \textit{American Economic Review} 112(2): 409--441.
+
+\bibitem[Denholm and Margolis(2018)]{denholm2018}
+  Denholm, P., and R.~Margolis (2018).
+  \newblock \textit{The Potential for Energy Storage to Provide Peaking Capacity
+    in California under Increased Penetration of Solar Photovoltaics}.
+  \newblock NREL Technical Report NREL/TP-6A20-70905.
+
+\bibitem[Emons(1988)]{emons1988}
+  Emons, W. (1988).
+  \newblock Warranties, moral hazard, and the lemons problem.
+  \newblock \textit{Journal of Economic Theory} 46(1): 16--33.
+
+\bibitem[Emons(1989)]{emons1989}
+  Emons, W. (1989).
+  \newblock On the limitation of warranty duration.
+  \newblock \textit{Journal of Industrial Economics} 37: 287--301.
+
+\bibitem[Gonzales et~al.(2023)]{gonzales2023}
+  Gonzales, L., K.~Ito, and M.~Reguant (2023).
+  \newblock The investment effects of market integration: Evidence from renewable
+    energy expansion in Chile.
+  \newblock \textit{Econometrica} 91(5): 1659--1693.
+
+\bibitem[Lamp and Samano(2022)]{lamp2022}
+  Lamp, S., and M.~Samano (2022).
+  \newblock Large-scale battery storage, short-term market outcomes, and
+    arbitrage.
+  \newblock \textit{Energy Economics} 107.
+
+\bibitem[Liu and Wang(2025)]{liuwang2025}
+  Liu, Y., and Z.~Wang (2025).
+  \newblock Optimal battery warranty design.
+  \newblock Working Paper.
+
+\bibitem[Reguant(2014)]{reguant2014}
+  Reguant, M. (2014).
+  \newblock Complementary bidding mechanisms and startup costs in electricity
+    markets.
+  \newblock \textit{Review of Economic Studies} 81(4): 1708--1742.
+
+\bibitem[Reynolds(2025)]{reynolds2025}
+  Reynolds, S.S. (2025).
+  \newblock Keeping the lights on: Battery storage, operating reserves, and
+    electricity scarcity pricing.
+  \newblock University of Arizona Working Paper Econ-WP-25-01.
+
+\bibitem[Seel et~al.(2021)]{seel2021}
+  Seel, J., C.~Warner, and A.~Mills (2021).
+  \newblock \textit{Influence of Business Models on PV-Battery Dispatch Decisions
+    and Market Value}.
+  \newblock Lawrence Berkeley National Laboratory, OSTI ID: 1825924.
+
+\bibitem[Xu et~al.(2018)]{xu2018}
+  Xu, B., A.~Oudalov, A.~Ulbig, G.~Andersson, and D.S.~Kirschen (2018).
+  \newblock Modeling of lithium-ion battery degradation for cell life assessment.
+  \newblock \textit{IEEE Transactions on Smart Grid} 9(2): 1131--1140.
+
+\end{thebibliography}
+\end{singlespace}
+
+\end{document}

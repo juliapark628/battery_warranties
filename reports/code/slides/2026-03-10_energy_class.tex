@@ -1,0 +1,157 @@
+\documentclass{beamer}
+\usepackage{bbm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{bm}
+\setbeamertemplate{footline}[frame number]
+
+
+%Information to be included in the title page:
+\title{Grid-scale battery dispatch distortions due to manufacturer warranties}
+\author{Julia Park}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}{Motivation}
+\begin{itemize}
+\item  One of the supposed advantages of grid batteries is being able to quickly and flexibly respond to the grid compared to other resources
+\item However, performance warranties set by the battery’s manufacturer often include restrictions on the battery’s dispatch behavior in order for the warranty to remain valid. 
+\end{itemize}
+\pause
+\textbf{Research question:} How do cycling behavior restrictions in grid-scale battery warranties distort battery behavior away from profit-maximizing (or socially optimal) dispatch?
+\end{frame}
+
+\begin{frame}{Context: Grid-scale battery warranties}
+\begin{itemize}
+    \item \textbf{Commercial Warranties}: a short-term guarantee that covers defects, part replacements, and component failures at the beginning of life
+    \item \textbf{Performance Warranties}: guarantee that the storage system will maintain specific performance standards over a longer period—often between 15-20 years
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Context: Grid-scale battery warranties}
+\begin{itemize}
+    \item \textcolor{gray}{Commercial Warranties: a short-term guarantee that covers defects, part replacements, and component failures at the beginning of life}
+    \item \textbf{Performance Warranties}: guarantee that the storage system will maintain specific performance standards over a longer period—often between 15-20 years
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Context: Types of Performance Warranties}
+
+\begin{itemize}
+    \item  \textbf{End-of-Life State of Health (SoH) warranty}: Promises a specific SoH (typically 70–80\%) by the end of the warranty period if the battery is used within certain operating conditions.
+    \item \textbf{Annual SoH warranty}: Promises a maximum yearly degradation rate if the battery is used within certain operating conditions.
+    \item \textbf{Penalty-based warranty}: Allows for adjustments in the yearly SoH guarantee depending on how battery is operated (e.g. if the system operates under sub-optimal conditions, the guaranteed SoH is reduced by a predefined formula.)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Context: Types of operating restrictions}
+
+Restrictions imposed on battery operation to prevent degradation:
+    \begin{itemize}
+        \item Limiting the number of cycles per year or per day 
+        \item State-of-charge requirements (e.g. less than 50\% annual average SOC)
+        \item Depth-of discharge limitations
+        \item Resting period requirements
+        \item etc. etc. etc.
+    \end{itemize}
+
+   
+\end{frame}
+
+\begin{frame}{Context: Trends in battery warranties}
+   Generally, the industry has been interested in moving away from more \textbf{restrictive} warranties (e.g.limits on the number of cycles) to more \textbf{flexible} warranties (e.g. rolling averages, charge/discharge rates over the  day, etc). 
+
+   \vspace{0.3cm}
+   Reasons for change:
+    \begin{itemize}
+        \item  Batteries mainly provide ancillary services, so applying a restriction on full cycles makes less sense
+        \item Batteries make much of their money arbitraging on a few high-demand days, rather than just once every days, so restrictions can prevent optimal dispatch.
+        \begin{itemize}
+            \item \textit{“Running a BESS with an inflexible guarantee is like paying rent all year for an umbrella shop, but being forced to keep the same daily stock; so when the rainy week comes, you sell out in the first hour and miss the payoff" \textcolor{gray}{-Gregory Green, managing partner at BlackVolt.}}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Trina Storage}
+    \begin{columns}
+
+% Left column: images
+\begin{column}{0.5\textwidth}
+\centering
+\includegraphics[width=\linewidth]{reports/input/2026-03-10_slide_figures/trinastorage_logo.jpeg}
+
+
+\includegraphics[width=\linewidth]{reports/input/2026-03-10_slide_figures/trina_storage.jpg}
+\end{column}
+
+% Right column: bullet points
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+    \item Product of Trinasolar, a Chinese PV/storage manufacturer 
+    \item \textbf{Early, pre-2025 warranties}: allows for 4 full-power cycles in a day
+    \item \textbf{New 2025 warranties}: limits continuous operation to around 0.25C charge/discharge rate (power/capacity) 
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}{Literature}
+\begin{itemize}
+
+\item \textbf{Electricity storage arbitrage and optimal dispatch}: 
+Profit-maximizing battery operation in electricity markets \\
+\textcolor{gray}{\small Sioshansi et al.\ (2009); Sioshansi (2010); 
+Denholm and Margolis (2018)}
+
+
+\item \textbf{Contract design and warranties}: 
+How contracts and warranties restrict buyer actions to manage risk, particularly for cars \\
+\textcolor{gray}{\small Cooper and Ross (1985); Emons (1989); Murthy and Ye (2016)}
+
+\item \textbf{Optimal design of battery warranties} \\
+\textcolor{gray}{Liu and Wang (2025)}
+
+\end{itemize}
+
+\vspace{0.2cm}
+
+\textbf{Contribution}: Unlike cars and many other products, for a battery, 1) there are several different dimensions of operational behavior a manufacturer could contract on, and 2) these choices could have larger effects on the the electricity market.
+
+\end{frame}
+\begin{frame}{Data sources}
+    Data on \textbf{operation restrictions in warranties}: 
+    \begin{itemize}
+        \item (in-progress) LBNL has a sample of 105 PV+battery hybrid plants with public PPAs, some of which contain restrictions on battery operations such as number of cycles per year or day, state-of-charge requirements, etc due to battery warranties. 
+        \item (in-progress) Reach out to companies specializing in constructing adaptive energy storage warranties (NEC Energy Solutions, IronGrid) to see if they are willing to provide information on battery manufacturers who switched to more flexible warranties. 
+    \end{itemize}
+
+    \vspace{0.3cm}
+    
+    Data on \textbf{battery operation}: 
+    \begin{itemize}
+        \item ERCOT's 60-day SCED Disclosure Report
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Research Plan}
+    \begin{itemize}
+        \item Categorize batteries into buckets (more vs less restrictive warranties), depending on observed variation among PPAs
+        \item Non-causal descriptives: compare battery behavior, such as 1) their bids into the ancillary services market and 2) their bids in response to unexpected price dips / spikes 
+        \item Potential simulation:
+        \begin{itemize}
+            \item Give each type of battery (+ a theoretical “no restriction” battery) the same price forecasting software, based on weather and previous prices.
+            \item Simulate their optimal behavior for an empirical price series for a year. 
+            \item Calculate difference in battery profit.
+            \item Compare with degradation costs for that dispatch behavior (to take from engineering literature / modeling)
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+
+
+\end{document}

@@ -1,0 +1,52 @@
+\documentclass{article}
+
+\usepackage[english]{babel}
+
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Dispatch distortions caused by grid-scale battery warranties}
+\author{Julia Park}
+
+\begin{document}
+\maketitle
+
+\textbf{Research Question}: 
+How do cycling behavior restrictions in grid-scale battery warranties distort battery behavior away from profit-maximizing (or socially optimal) dispatch?
+
+\textbf{Motivation}:
+One of the supposed main advantages of grid batteries is being able to quickly and flexibly respond to the grid compared to intermittent renewables (which require solar or wind to generate) or other natural resource plants (which have higher startup costs and times). However, warranties between the battery’s Original Equipment Manufacturer (OEM) and the owner of the battery often include restrictions on the battery’s behavior in order for the warranty to remain valid. 
+
+I’m specifically interested in Performance Warranties (a guarantee that the storage system will maintain specific performance standards over a longer period—often between 15-20 years), as opposed to Commercial Warranties (a short-term guarantee that covers defects, part replacements, and component failures at the beginning of life). 
+
+These warranties vary in structure. From this EnergyStorage.news article, there seems to be: 
+The End-of-Life State of Health (SoH) warranty: Promises a specific SoH (typically 70–80\%) by the end of the warranty period if the battery is used within the – often narrow – operating conditions laid out in the warranty contract.
+Annual SoH warranty: Promises a maximum yearly degradation rate rather than just an end goal. This annual cap makes it easier to plan and track performance over time, though it still requires strict adherence to narrow operating conditions to keep the warranty valid.
+Penalty-based warranty: Offering a more flexible approach, this type allows for adjustments in the yearly SoH guarantee depending on how the BESS is used. If the system operates under sub-optimal conditions, the guaranteed SoH may be reduced by a predefined formula.
+
+The types of operational restrictions vary as well; they may limit the number of cycles per year (or per day), or impose state-of-charge requirements (e.g. Less than 50\% annual average SOC) and depth-of discharge limitations. Of course, there are other restrictions on the warranties – for example, they are usually only valid for a certain amount of calendar time (regardless of utilization), and when the battery is operated under certain temperatures – but I focus less on these for now. 
+
+These restrictions are meant to manage the degradation of the battery, but given that the revenue structure of batteries is often to 1) provide ancillary services, in which case applying a restriction on full cycles makes less sense and/or 2) make much of their money arbitraging on a few high-demand days, rather than just once every days, these contractual requirements can prevent optimal dispatch if too restrictive. 
+
+As a result, in recent times, for example in this article, and in the virtual forum I attended, there has been a call in the industry for more dynamic, usage-based warranties, rather than the restrictive versions that had been more common. 
+
+\textbf{Data Sources}
+Documenting operational restrictions in battery warranties is the most difficult/uncertain step for me in terms of data collection. According to a LBNL Berkeley Lab report, we can find operational restrictions imposed on battery operations (limits on number of cycles per year, state-of-charge requirements, depth-of-discharge limitations) in a sample of PPAs for PV+storage hybrid projects, so for now I’ll be proceeding with checking these and seeing how varied and clear the operating restrictions in these PPAs are. 
+
+Hopefully then I can link those PPAs to battery behavior. I’m hoping to link to ERCOT batteries since I know they have great open data on submitted generation/load bids as well as generation/load behavior which I’m familiar with and have worked with before, but I believe maybe CAISO might publish data on individual battery behavior. 
+
+
+\textbf{Proposed empirical approach}: 
+After looking at the warranty data, hopefully I’ll have some batteries that are under less restrictive operational requirements, and batteries that are under more restrictive operational requirements. 
+
+I’ll have to continue to think of a way to make sure that those batteries are not under different warranties because one’s underlying technology is better. 
+
+But barring that, I can compare these two groups of batteries behavior across different scenarios, such as 1) their bids into the ancillary services market and 2) their bids in response to unexpected price dips / spikes (which can be defined as, for example, a sudden increase in price associated with a large unexpected outage, as opposed to weather which can be forecasted). 
+
+I’m not entirely sure what kind of welfare analysis I can do before looking at what exact types of restrictions are prominent in the data. But for example, if I can cleanly divide the batteries as “cycle-restricted” who are restricted to 1 or 2 cycles a day vs “throughput restricted” whose warranties are based on annual throughput, we can give each of these batteries (+ a theoretical “no restriction” battery) the same price forecasting software (based on weather and previous prices), and simulate their optimal behavior for an empirical price series for a year. Then we can see the difference in battery profit, and compare with the degradation costs (taken from engineering literature) for that dispatch behavior. 
+
+
+\end{document}
