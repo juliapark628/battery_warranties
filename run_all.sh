@@ -9,7 +9,7 @@ error_handler() {
 }
 
 # Replace with name of your project
-PROJECT_NAME="PROJ_TEMPLATE"
+PROJECT_NAME="battery_warranties"
 
 # Tell user what we're doing
 echo -e "Making \033[35m${PROJECT_NAME}\033[0m with shell: ${SHELL}"
