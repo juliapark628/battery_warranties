@@ -141,6 +141,149 @@ Reasons for change:
 \end{columns}
 \end{frame}
 
+\section{Evidence from Regulatory Filings}
+
+\begin{frame}{Restrictions in Practice: PPA and ESA Filings}
+Operational restrictions are not hypothetical---they appear verbatim in public utility commission filings.
+\vspace{0.3cm}
+\begin{itemize}
+    \item Utilities in Texas (PUCT) and New Mexico (NMPRC) must file PPAs and Energy Storage Agreements (ESAs) for regulatory approval
+    \item These documents contain operational restriction exhibits (e.g.\ ``Exhibit L: ESS Operating Restrictions'') specifying exact cycle limits, SOC windows, and enforcement rules
+    \item We collected and catalogued restriction terms from \textbf{11 dockets}, covering \textbf{16 battery projects} filed between 2021 and 2025
+    \begin{itemize}
+        \item Texas: 8 batteries across 4 PUCT dockets
+        \item New Mexico: 10 batteries across 5 NMPRC dockets (some overlap with TX)
+    \end{itemize}
+    \item Battery manufacturer \textbf{unnamed in every public filing}---warranty terms embedded by reference to ``what the manufacturer recommends''
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Texas: Operational Restrictions Across Dockets}
+\footnotesize
+\begin{tabular}{p{2.8cm} p{0.9cm} p{2.0cm} p{2.5cm} p{1.6cm}}
+\toprule
+\textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} & \textbf{Outcome} \\
+\midrule
+Wildcat Ranch BESS (TX-57244) & 48 & 250 cap; excess to ${\sim}$365 at add'l charge & $<$50\% avg ceiling & Denied \\
+\addlinespace
+Carne ESA (TX-57760) & 65 & 340 cap; 2/day & $<$60\% avg ceiling; $<$20\% at rest & Executed \\
+\addlinespace
+Lorenzo/Chaves/ Roswell BESSes (TX-59034) & 50 ea. & 365; 5\%/day & $>$51\% avg \textit{floor} & Pending \\
+\addlinespace
+Wildcat Ranch II / Palo Duro / Mammoth Plains (TX-59034) & 120--150 & 365; 5\%/day & $>$51\% avg \textit{floor} & Pending \\
+\bottomrule
+\end{tabular}
+\vspace{0.2cm}
+
+\begin{itemize}
+    \item TX-59034 batteries impose an SOC \textit{floor} (must stay above 51\%), opposite in direction to TX-57244/TX-57760 \textit{ceilings}
+    \item TX-59034 also imposes a \textbf{surplus BESS constraint}: battery may only charge/discharge when co-located renewable is not at full output
+\end{itemize}
+\end{frame}
+
+\begin{frame}{New Mexico: Operational Restrictions Across Dockets}
+\footnotesize
+\begin{tabular}{p{2.8cm} p{0.8cm} p{1.9cm} p{2.6cm} p{1.7cm}}
+\toprule
+\textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} & \textbf{Enforcement} \\
+\midrule
+Sky Ranch (NM-21-00031) & 100 & 365; optional to 535 & $<$40\% BAASOC ceiling; penalty: $-$5 cycles & Retroactive \\
+\addlinespace
+TAG Energy (NM-23-00251) & 50 & 365 hard cap & Manufacturer bounds only; no avg ceiling & Retroactive \\
+\addlinespace
+Quail Ranch (NM-23-00353) & 100 & 365; 2/day & $<$60\% avg ceiling; $>$30\% at rest ($>$3 mo.) & Retroactive \\
+\addlinespace
+Route 66 / Sky Ranch II (NM-23-00353) & 50/100 & 365; daily = mfr warranty only & $<$40\% BAASOC ceiling & Retroactive \\
+\addlinespace
+Four Mile Mesa / Star Light / Windy Lane (NM-25-00048) & 68--100 & 365; 2/day & $<$50\% avg ceiling; min 3\% for $\leq$1 hr & \textbf{Automated} \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Pattern 1: Annual Cycle Limits Are Ubiquitous}
+\textbf{Every battery in the corpus has an annual equivalent full cycle cap.}
+\vspace{0.3cm}
+\begin{itemize}
+    \item Range: 250--365 EFCs/year across the 16 projects
+    \item 365 EFCs/year is the most common limit---equivalent to one full discharge per day on average
+    \item At 4-hour duration, 365 EFCs/year $\approx$ 1,460 MWh of annual throughput per MW of capacity
+    \pause
+    \item \textbf{Key implication}: cycle budgets create \textit{intertemporal linkages} across dispatch decisions
+    \begin{itemize}
+        \item An operator facing a binding annual cap treats a cycle today as reducing the option value of cycling in future high-price periods
+        \item This can distort dispatch even on days where the daily limit is not binding
+    \end{itemize}
+    \pause
+    \item Some filings also impose \textbf{daily cycle limits} (2 EFCs/day) or refer daily limits to undisclosed manufacturer warranty---creating a gap in the public record
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Pattern 2: SOC Constraints Vary in Direction and Design}
+SOC constraints appear in nearly every ESA, but their design differs substantially:
+\vspace{0.2cm}
+\begin{itemize}
+    \item \textbf{Average SOC ceilings} (most common): battery must not be held too fully charged on average
+    \begin{itemize}
+        \item Range: 40\%--60\% across the corpus
+        \item Penalty design varies: direct financial damages vs.\ retroactive cycle-count reduction
+    \end{itemize}
+    \pause
+    \item \textbf{Average SOC floors} (TX-59034): battery must not be held too discharged on average ($>51\%$)
+    \begin{itemize}
+        \item Opposite direction---prevents chronic deep-discharge, not chronic overcharge
+    \end{itemize}
+    \pause
+    \item \textbf{Resting SOC limits}: separate ceiling on SOC during prolonged non-operating periods (e.g.\ $<$20\% in TX-57760; $>$30\% in Quail Ranch during outages $>$3 months)
+    \pause
+    \item \textbf{Minimum hold rule} (NM-25-00048): SOC may not remain below 3\% for more than 1 hour continuously
+\end{itemize}
+\vspace{0.2cm}
+The diversity of SOC constraint design across a small corpus suggests these terms are \textit{manufacturer-specific}, not standardized.
+\end{frame}
+
+\begin{frame}{Pattern 3: The Warranty Chain}
+Restrictions originate from battery manufacturers but reach grid dispatch through a layered contractual chain:
+
+\vspace{0.3cm}
+\begin{center}
+\textbf{Manufacturer warranty}\\
+$\downarrow$\\
+ESA Exhibit L / Exhibit O (``ESS Operating Restrictions'')\\
+$\downarrow$\\
+Utility dispatch authority (PNM, SPS, EPE)\\
+$\downarrow$\\
+\textit{Regulatory approval} (NMPRC, PUCT)
+\end{center}
+
+\vspace{0.3cm}
+\begin{itemize}
+    \item The Special Service Contract (SSC) between PNM and Greater Kudu LLC (Meta) states: \textit{``In charging and discharging SSC Storage Resources, PNM shall abide by any warranty restrictions or other terms of the Third Party ESAs''} --- \textcolor{gray}{SSC \S8.4.3, NM-25-00048-UT}
+    \item \textbf{The NMPRC approved this arrangement}: the Commission is effectively ratifying unnamed manufacturer warranty terms as conditions on utility dispatch
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Pattern 4: Enforcement Design Is Evolving}
+\textbf{Earlier ESAs (2021--2023)}: financial disincentives applied retroactively.
+\begin{itemize}
+    \item Exceeding the SOC ceiling reduces cycle allowance for that year (NM-21-00031-UT, NM-23-00353-UT)
+    \item Violating RTE guarantee triggers payment adjustment (TX-57760)
+    \item Operator is not blocked in real time---can exceed the constraint and face financial consequences later
+\end{itemize}
+
+\vspace{0.3cm}
+\pause
+\textbf{Newer ESAs (2025)}: automated real-time refusal.
+\begin{itemize}
+    \item NM-25-00048-UT (Four Mile Mesa, Star Light, Windy Lane): \textit{``Seller will have no obligation to dispatch the ESS in response to any dispatch instructions provided by PNM that are not in accordance with the Operating Parameters''}
+    \item The BESS control system \textbf{physically refuses} the dispatch command
+    \item Non-conforming period counts as ``Seller Excused Hours''---no penalty to Seller
+    \item Operator \textit{cannot} exceed the constraint; it is enforced at the hardware/software level
+\end{itemize}
+\vspace{0.2cm}
+\pause
+\textbf{Implication}: newer batteries may show \textit{hard kinks} in dispatch behavior at constraint boundaries rather than the smooth forward-looking adjustment predicted for soft penalties.
+\end{frame}
+
 \section{Literature Review and Positioning}
 
 \begin{frame}{Literature: Electricity Storage Arbitrage}
@@ -513,6 +656,173 @@ Broader aim: improve our understanding of battery dispatch decisions and constra
     \item Seel, Warner, Mills (2021). Influence of Business Models on PV-Battery Dispatch. LBNL.
     \item Xu et al. (2018). Lithium-ion battery degradation. \textit{IEEE Smart Grid} 9(2): 1131--1140.
 \end{itemize}
+\end{frame}
+
+\section{Appendix: Bidding Model}
+
+\begin{frame}{Bidding model: ex-ante quantity-only}
+Simplified structural framework underlying the Strategy 3 dispatch simulation.
+
+\vspace{0.2cm}
+\begin{itemize}
+    \item At the start of hour $h$, the battery commits a dispatch quantity based on the previous-period price $p_{h-1}$
+    \item The committed quantity clears at the realized $p_h$ (no step-bid---always clears)
+    \item \textbf{Continuous SoC}---no five-level discretization
+    \item Warranty constraints enter cleanly as either hard bounds or Lagrangian shadow prices
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Relation to alternatives:}
+\begin{itemize}
+    \item More realistic than \textit{ex-post} self-scheduling (operator doesn't observe $p_h$ before committing)
+    \item Simpler than \textit{step-bid} models, which suffer from a joint price-quantity identification problem
+    \item Broadly consistent with observed CAISO/ERCOT practice of forward quantity commitment
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model setup}
+\textbf{Choice and state variables:}
+\begin{itemize}
+    \item $g_h \geq 0$: discharge quantity; $\;l_h \geq 0$: charge quantity; $\;g_h \cdot l_h = 0$
+    \item $s_h \in [0, E_{\max}]$: state of charge (continuous)
+    \item $p_h$: settlement-point price
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{SoC dynamics} with round-trip efficiency $\delta \in (0,1)$:
+\[
+s_{h+1} = s_h - g_h + \delta\, l_h
+\]
+
+\textbf{Per-period profit} with per-MWh cycling cost $c/k$:
+\[
+\pi_h = (g_h - l_h)\,p_h \;-\; \frac{c\,g_h}{k}
+\]
+
+\textbf{Price process}---AR(1) in levels with conditional mean
+\[
+\bar p_h \;\equiv\; \mathbb{E}[p_h\mid p_{h-1}] \;=\; \theta_h\, p_{h-1} + \mu_h.
+\]
+\end{frame}
+
+\begin{frame}{Bellman equation}
+Because quantities are committed ex-ante, $s_{h+1}$ is deterministic given $(g_h, l_h)$. Define the integrated value
+\[
+\tilde V_{h+1}(s,\,p_{h-1}) \;:=\; \mathbb{E}\!\left[\,V_{h+1}(s, p_h)\,\middle|\,p_{h-1}\right].
+\]
+
+\vspace{0.2cm}
+The value function satisfies
+\[
+V_h(s_h, p_{h-1}) = \max_{g_h,\,l_h}\Big\{(g_h - l_h)\,\bar p_h - \tfrac{c\,g_h}{k} + \tilde V_{h+1}(s_h - g_h + \delta l_h,\, p_{h-1})\Big\}
+\]
+subject to feasibility (SoC bounds, power limits).
+
+\vspace{0.3cm}
+Within-period price uncertainty enters only through $\tilde V_{h+1}$; the expected price $\bar p_h$ replaces the realized $p_h$ in the FOC.
+\end{frame}
+
+\begin{frame}{First-order conditions}
+At most one of $g_h, l_h$ is positive (assuming $c \geq 0$ and $\delta < 1$).
+
+\vspace{0.2cm}
+\textbf{Discharge} ($g_h > 0$):
+\[
+\bar p_h - \frac{c}{k} \;=\; \frac{\partial \tilde V_{h+1}}{\partial s}\big(s_h - g_h,\, p_{h-1}\big)
+\]
+
+\textbf{Charge} ($l_h > 0$):
+\[
+\bar p_h \;=\; \delta\cdot\frac{\partial \tilde V_{h+1}}{\partial s}\big(s_h + \delta l_h,\, p_{h-1}\big)
+\]
+
+\textbf{Idle} whenever
+\[
+\delta\,\tilde V'_s(s_h, p_{h-1}) \;<\; \bar p_h \;<\; \frac{c}{k} + \tilde V'_s(s_h, p_{h-1}).
+\]
+
+\vspace{0.2cm}
+Classical water-storage structure: current expected price equated to marginal future value of SoC at the post-decision state.
+\end{frame}
+
+\begin{frame}{Threshold policy}
+At each $(s_h, p_{h-1})$:
+\begin{itemize}
+    \item \textbf{Discharge} iff $\;\bar p_h > c/k + \tilde V'_s(s_h, p_{h-1})$
+    \item \textbf{Charge} iff $\;\bar p_h < \delta\,\tilde V'_s(s_h, p_{h-1})$
+    \item Otherwise \textbf{idle}
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Interpretation:}
+\begin{itemize}
+    \item $\tilde V'_s$ is the shadow value of SoC---what a marginal MWh of stored energy is worth in expectation going forward
+    \item Discharge threshold = shadow value $+$ marginal cycling cost
+    \item Round-trip efficiency $\delta < 1$ and cycling cost $c/k$ together create the idle band
+    \item \textbf{Concavity} of $\tilde V_{h+1}$ in $s$ pins down quantity uniquely---without it, only the thresholds are identified
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Warranty constraints: hard SoC bounds}
+Warranty language often specifies per-period bounds such as ``SoC must remain in $[s^{\min}, s^{\max}]$.''
+
+\vspace{0.2cm}
+\textbf{Modification:} only the feasibility set changes---
+\[
+g_h \leq \min(s_h - s^{\min},\,\bar Q_g), \qquad l_h \leq \min\!\left(\tfrac{s^{\max}-s_h}{\delta},\,\bar Q_l\right).
+\]
+
+\vspace{0.2cm}
+\textbf{Effect on equilibrium behavior:}
+\begin{itemize}
+    \item FOCs unchanged; Lagrange multipliers $\mu^{\min}_h, \mu^{\max}_h \geq 0$ emerge when bounds bind
+    \item $\tilde V'_s$ spikes near the floor---battery can't sell when near empty---widening the idle band sharply
+    \item Concavity preserved; the DP remains well-posed
+    \item Implementation cost is negligible: just tighten the box in the 1-D root-find
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Warranty constraints: annual cycle cap}
+Cycle caps couple decisions across all 8{,}760 hours, breaking per-day stationarity.
+
+\vspace{0.2cm}
+\textbf{Lagrangian decoupling.} Shadow price $\lambda \geq 0$ on the annual constraint
+\[
+\mathbb{E}\!\left[\,\sum_{\text{year}} g_h\,\right] \;\leq\; N \cdot E_{\max}.
+\]
+
+\vspace{0.2cm}
+Modified discharge FOC:
+\[
+\bar p_h - \frac{c}{k} - \lambda \;=\; \frac{\partial \tilde V_{h+1}}{\partial s}(s_h - g_h,\, p_{h-1})
+\]
+
+\begin{itemize}
+    \item $\lambda$ adds directly to the marginal cycling cost---widens the idle band by exactly $\lambda$
+    \item Interpretable as the \textbf{shadow value of a cycle} (\$/MWh of foregone discharge)---the economic object the warranty literature wants to quantify
+    \item Outer loop: bisect $\lambda$ until simulated annual throughput equals the cap
+    \item Per-day DP structure is preserved; annual aggregation enters only through $\lambda$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Solution algorithm}
+Backward induction on $V_h(s, p_{h-1})$ over a 2-D grid.
+
+\vspace{0.2cm}
+For each $h = 24, \dots, 1$ and each $(s_h, p_{h-1})$:
+\begin{enumerate}
+    \item Compute $\bar p_h = \theta_h p_{h-1} + \mu_h$
+    \item Integrate $V_{h+1}(s, p)$ against the conditional density $p_h \mid p_{h-1}$ to form $\tilde V_{h+1}$
+    \item Solve the discharge FOC (1-D root-find in $g_h$) and the charge FOC analogously
+    \item Accept whichever yields positive gain over idling; plug back into the Bellman
+    \item Interpolate $\tilde V$ in $s$ with a shape-preserving spline to keep $\partial \tilde V/\partial s$ monotone
+\end{enumerate}
+
+\vspace{0.2cm}
+\textbf{Outer loop} when cycle-capped: bisect $\lambda$ until annual throughput binds the warranty.
+
+\vspace{0.2cm}
+Complexity $\mathcal{O}(|S|\cdot|P|\cdot H)$ per $\lambda$ iteration. Runs in seconds on $|S|=100,\;|P|=50,\;H=24$.
 \end{frame}
 
 \end{document}
