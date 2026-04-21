@@ -20,268 +20,68 @@
     \item Grid-scale batteries have expanded rapidly in U.S. electricity markets
     \begin{itemize}
         \item Over 26 GW of installed capacity by early 2025
-        \item ERCOT alone hosts approximately 3.2 GW (Reynolds, 2025)
+        \item Texas (ERCOT) alone hosts approximately 3.2 GW (Reynolds, 2025)
     \end{itemize}
     \pause
-    \item The primary economic rationale for this investment is \textbf{flexibility}
+    \item A primary economic rationale for this investment is \textbf{flexibility}
     \begin{itemize}
         \item Unlike intermittent renewables or fossil-fuel generators with startup costs, batteries can respond within seconds
-        \item This makes them uniquely valuable for arbitrage and ancillary services
+        \item Uniquely valuable for smoothing unexpected spikes in demand
     \end{itemize}
     \pause
-    \item But in practice, batteries do not operate unconstrained
+    \item But in practice, battery operation is not unconstrained
     \begin{itemize}
-        \item Manufacturer performance warranties impose binding operational restrictions
-        \item These contractual frictions may distort dispatch away from profit-maximizing and socially optimal behavior
+        \item Batteries face contractual operational restrictions from offtake agreements / PPAs, warranties, etc.
     \end{itemize}
 \end{itemize}
+
+\textbf{Research question}: \textit{How do contractual operational restrictions for grid-scale battery distort dispatch away from profit-maximizing or socially optimal behavior?}
 \end{frame}
 
-\begin{frame}{Research Question}
-\textbf{Central question:} \\
-\vspace{0.2cm}
-\textit{How do cycling restrictions in grid-scale battery performance warranties distort dispatch away from profit-maximizing and socially optimal behavior?}
-
-\vspace{0.5cm}
-\pause
-\textbf{Why this matters:}
-\begin{itemize}
-    \item Batteries earn a disproportionate share of revenue on a small number of high-price days
-    \item Rigid warranty cycle restrictions may prevent operators from cycling intensively on those high-value days
-    \item If operators face forward-looking incentives to conserve cycles, distortions may be significant even on days where the cycle budget isn't fully binding
-\end{itemize}
-\end{frame}
 
 \begin{frame}{Roadmap}
     \begin{enumerate}
-        \item Institutional background on battery warranties
-        \item Literature review and positioning
+        \item Institutional background on battery operational restrictions
+        \item Literature review
         \item Data sources
-        \item Proposed empirical strategies
-        \begin{itemize}
-            \item Descriptive comparisons across warranty types
-            \item Difference-in-differences exploiting warranty policy changes
-            \item Battery dispatch simulation
-        \end{itemize}
-        \item Potential welfare analysis
-        \item Discussion
+        \item Proposed bidding model simulation
+        \item Future steps
     \end{enumerate}
 \end{frame}
 
 \section{Institutional Background}
 
-\begin{frame}{Context: Grid-scale battery warranties}
+\begin{frame}{Context: Where do operational restrictions come from?}
 \begin{itemize}
-    \item \textbf{Commercial Warranties}: a short-term guarantee that covers defects, part replacements, and component failures at the beginning of life
-    \item \textbf{Performance Warranties}: guarantee that the storage system will maintain specific performance standards over a longer period---often between 15-20 years
+    \item \textbf{Performance Warranties}: guarantee from battery manufacturer that the storage system will maintain specific performance standards over 15-20 years, if battery is operated within certain constraints
+    \item \textbf{Power Purchase Agreements (PPAs) / Energy Storage Agreement (ESAs)}: financial agreement to purchase power between operator and offtaker. 
+    \begin{itemize}
+        \item These days, the operational restrictions from these are usually harmonized (although interviews have told me that in the past that wasn't always the case...)
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Context: Grid-scale battery warranties}
-\begin{itemize}
-    \item \textcolor{gray}{Commercial Warranties: a short-term guarantee that covers defects, part replacements, and component failures at the beginning of life}
-    \item \textbf{Performance Warranties}: guarantee that the storage system will maintain specific performance standards over a longer period---often between 15-20 years
-\end{itemize}
-\end{frame}
 
-\begin{frame}{Context: Types of Performance Warranties}
-\begin{itemize}
-    \item \textbf{End-of-Life State of Health (SoH) warranty}: Promises a specific SoH (typically 70--80\%) by the end of the warranty period if the battery is used within certain operating conditions.
-    \item \textbf{Annual SoH warranty}: Promises a maximum yearly degradation rate if the battery is used within certain operating conditions.
-    \item \textbf{Penalty-based warranty}: Allows for adjustments in the yearly SoH guarantee depending on how the battery is operated (e.g. if the system operates under sub-optimal conditions, the guaranteed SoH is reduced by a predefined formula).
-\end{itemize}
-\end{frame}
 
-\begin{frame}{Context: Types of operating restrictions}
+\begin{frame}{Context: Common types of operating restrictions}
 Restrictions imposed on battery operation to prevent degradation:
 \begin{itemize}
     \item \textbf{Cycle frequency limits}: cap on full charge-discharge cycles per day or per year (typically clustered around 1--1.5 cycles/day)
-    \item \textbf{State-of-charge requirements}: constrain annual average SOC, commonly below 50\%
-    \item \textbf{Depth-of-discharge (DoD) limitations}: prevent full cycling of the nominal capacity on each dispatch event
-    \item \textbf{C-rate caps}: limit maximum power-to-capacity ratio (e.g., 0.25C on a 100 MWh battery caps power at 25 MW)
-    \item \textbf{Resting period requirements}: enforce battery inactivity after a cycle to allow temperature regulation
+    \item \textbf{State-of-charge requirements}: constrain annual average SOC, commonly below or above 50\%
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Context: Trends in battery warranties}
-Generally, the industry has been moving away from more \textbf{restrictive} warranties (e.g. limits on number of cycles) to more \textbf{flexible} warranties (e.g. rolling averages, charge/discharge rates over the day).
+The industry has been interested in how to design these operational restrictions such that they are less \textbf{restrictive}  (e.g. limits on number of cycles) and more \textbf{flexible} warranties (e.g. rolling averages, charge/discharge rates over the day).
 
 \vspace{0.3cm}
 Reasons for change:
 \begin{itemize}
-    \item Batteries mainly provide ancillary services, so applying a restriction on full cycles makes less sense
     \item Batteries earn much of their money arbitraging on a few high-demand days, rather than just once every day, so restrictions can prevent optimal dispatch
     \begin{itemize}
         \item \textit{``Running a BESS with an inflexible guarantee is like paying rent all year for an umbrella shop, but being forced to keep the same daily stock; so when the rainy week comes, you sell out in the first hour and miss the payoff"} \textcolor{gray}{-Gregory Green, BlackVolt}
     \end{itemize}
 \end{itemize}
-\end{frame}
-
-\begin{frame}{Example: Trina Storage}
-    \begin{columns}
-
-% Left column: images
-\begin{column}{0.5\textwidth}
-\centering
-\includegraphics[width=\linewidth]{reports/input/2026-03-10_slide_figures/trinastorage_logo.jpeg}
-
-\includegraphics[width=\linewidth]{reports/input/2026-03-10_slide_figures/trina_storage.jpg}
-\end{column}
-
-% Right column: bullet points
-\begin{column}{0.5\textwidth}
-\begin{itemize}
-    \item Product of Trinasolar, a Chinese PV/storage manufacturer
-    \item \textbf{Early, pre-2025 warranties}: allowed 4 full-power cycles in a day
-    \item \textbf{New 2025 warranties}: limit continuous operation to around 0.25C charge/discharge rate (power/capacity)
-    \item A rare example where the same manufacturer changed warranty structure---potentially useful for quasi-experimental analysis
-\end{itemize}
-\end{column}
-
-\end{columns}
-\end{frame}
-
-\section{Evidence from Regulatory Filings}
-
-\begin{frame}{Restrictions in Practice: PPA and ESA Filings}
-Operational restrictions are not hypothetical---they appear verbatim in public utility commission filings.
-\vspace{0.3cm}
-\begin{itemize}
-    \item Utilities in Texas (PUCT) and New Mexico (NMPRC) must file PPAs and Energy Storage Agreements (ESAs) for regulatory approval
-    \item These documents contain operational restriction exhibits (e.g.\ ``Exhibit L: ESS Operating Restrictions'') specifying exact cycle limits, SOC windows, and enforcement rules
-    \item We collected and catalogued restriction terms from \textbf{11 dockets}, covering \textbf{16 battery projects} filed between 2021 and 2025
-    \begin{itemize}
-        \item Texas: 8 batteries across 4 PUCT dockets
-        \item New Mexico: 10 batteries across 5 NMPRC dockets (some overlap with TX)
-    \end{itemize}
-    \item Battery manufacturer \textbf{unnamed in every public filing}---warranty terms embedded by reference to ``what the manufacturer recommends''
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Texas: Operational Restrictions Across Dockets}
-\footnotesize
-\begin{tabular}{p{2.8cm} p{0.9cm} p{2.0cm} p{2.5cm} p{1.6cm}}
-\toprule
-\textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} & \textbf{Outcome} \\
-\midrule
-Wildcat Ranch BESS (TX-57244) & 48 & 250 cap; excess to ${\sim}$365 at add'l charge & $<$50\% avg ceiling & Denied \\
-\addlinespace
-Carne ESA (TX-57760) & 65 & 340 cap; 2/day & $<$60\% avg ceiling; $<$20\% at rest & Executed \\
-\addlinespace
-Lorenzo/Chaves/ Roswell BESSes (TX-59034) & 50 ea. & 365; 5\%/day & $>$51\% avg \textit{floor} & Pending \\
-\addlinespace
-Wildcat Ranch II / Palo Duro / Mammoth Plains (TX-59034) & 120--150 & 365; 5\%/day & $>$51\% avg \textit{floor} & Pending \\
-\bottomrule
-\end{tabular}
-\vspace{0.2cm}
-
-\begin{itemize}
-    \item TX-59034 batteries impose an SOC \textit{floor} (must stay above 51\%), opposite in direction to TX-57244/TX-57760 \textit{ceilings}
-    \item TX-59034 also imposes a \textbf{surplus BESS constraint}: battery may only charge/discharge when co-located renewable is not at full output
-\end{itemize}
-\end{frame}
-
-\begin{frame}{New Mexico: Operational Restrictions Across Dockets}
-\footnotesize
-\begin{tabular}{p{2.8cm} p{0.8cm} p{1.9cm} p{2.6cm} p{1.7cm}}
-\toprule
-\textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} & \textbf{Enforcement} \\
-\midrule
-Sky Ranch (NM-21-00031) & 100 & 365; optional to 535 & $<$40\% BAASOC ceiling; penalty: $-$5 cycles & Retroactive \\
-\addlinespace
-TAG Energy (NM-23-00251) & 50 & 365 hard cap & Manufacturer bounds only; no avg ceiling & Retroactive \\
-\addlinespace
-Quail Ranch (NM-23-00353) & 100 & 365; 2/day & $<$60\% avg ceiling; $>$30\% at rest ($>$3 mo.) & Retroactive \\
-\addlinespace
-Route 66 / Sky Ranch II (NM-23-00353) & 50/100 & 365; daily = mfr warranty only & $<$40\% BAASOC ceiling & Retroactive \\
-\addlinespace
-Four Mile Mesa / Star Light / Windy Lane (NM-25-00048) & 68--100 & 365; 2/day & $<$50\% avg ceiling; min 3\% for $\leq$1 hr & \textbf{Automated} \\
-\bottomrule
-\end{tabular}
-\end{frame}
-
-\begin{frame}{Pattern 1: Annual Cycle Limits Are Ubiquitous}
-\textbf{Every battery in the corpus has an annual equivalent full cycle cap.}
-\vspace{0.3cm}
-\begin{itemize}
-    \item Range: 250--365 EFCs/year across the 16 projects
-    \item 365 EFCs/year is the most common limit---equivalent to one full discharge per day on average
-    \item At 4-hour duration, 365 EFCs/year $\approx$ 1,460 MWh of annual throughput per MW of capacity
-    \pause
-    \item \textbf{Key implication}: cycle budgets create \textit{intertemporal linkages} across dispatch decisions
-    \begin{itemize}
-        \item An operator facing a binding annual cap treats a cycle today as reducing the option value of cycling in future high-price periods
-        \item This can distort dispatch even on days where the daily limit is not binding
-    \end{itemize}
-    \pause
-    \item Some filings also impose \textbf{daily cycle limits} (2 EFCs/day) or refer daily limits to undisclosed manufacturer warranty---creating a gap in the public record
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Pattern 2: SOC Constraints Vary in Direction and Design}
-SOC constraints appear in nearly every ESA, but their design differs substantially:
-\vspace{0.2cm}
-\begin{itemize}
-    \item \textbf{Average SOC ceilings} (most common): battery must not be held too fully charged on average
-    \begin{itemize}
-        \item Range: 40\%--60\% across the corpus
-        \item Penalty design varies: direct financial damages vs.\ retroactive cycle-count reduction
-    \end{itemize}
-    \pause
-    \item \textbf{Average SOC floors} (TX-59034): battery must not be held too discharged on average ($>51\%$)
-    \begin{itemize}
-        \item Opposite direction---prevents chronic deep-discharge, not chronic overcharge
-    \end{itemize}
-    \pause
-    \item \textbf{Resting SOC limits}: separate ceiling on SOC during prolonged non-operating periods (e.g.\ $<$20\% in TX-57760; $>$30\% in Quail Ranch during outages $>$3 months)
-    \pause
-    \item \textbf{Minimum hold rule} (NM-25-00048): SOC may not remain below 3\% for more than 1 hour continuously
-\end{itemize}
-\vspace{0.2cm}
-The diversity of SOC constraint design across a small corpus suggests these terms are \textit{manufacturer-specific}, not standardized.
-\end{frame}
-
-\begin{frame}{Pattern 3: The Warranty Chain}
-Restrictions originate from battery manufacturers but reach grid dispatch through a layered contractual chain:
-
-\vspace{0.3cm}
-\begin{center}
-\textbf{Manufacturer warranty}\\
-$\downarrow$\\
-ESA Exhibit L / Exhibit O (``ESS Operating Restrictions'')\\
-$\downarrow$\\
-Utility dispatch authority (PNM, SPS, EPE)\\
-$\downarrow$\\
-\textit{Regulatory approval} (NMPRC, PUCT)
-\end{center}
-
-\vspace{0.3cm}
-\begin{itemize}
-    \item The Special Service Contract (SSC) between PNM and Greater Kudu LLC (Meta) states: \textit{``In charging and discharging SSC Storage Resources, PNM shall abide by any warranty restrictions or other terms of the Third Party ESAs''} --- \textcolor{gray}{SSC \S8.4.3, NM-25-00048-UT}
-    \item \textbf{The NMPRC approved this arrangement}: the Commission is effectively ratifying unnamed manufacturer warranty terms as conditions on utility dispatch
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Pattern 4: Enforcement Design Is Evolving}
-\textbf{Earlier ESAs (2021--2023)}: financial disincentives applied retroactively.
-\begin{itemize}
-    \item Exceeding the SOC ceiling reduces cycle allowance for that year (NM-21-00031-UT, NM-23-00353-UT)
-    \item Violating RTE guarantee triggers payment adjustment (TX-57760)
-    \item Operator is not blocked in real time---can exceed the constraint and face financial consequences later
-\end{itemize}
-
-\vspace{0.3cm}
-\pause
-\textbf{Newer ESAs (2025)}: automated real-time refusal.
-\begin{itemize}
-    \item NM-25-00048-UT (Four Mile Mesa, Star Light, Windy Lane): \textit{``Seller will have no obligation to dispatch the ESS in response to any dispatch instructions provided by PNM that are not in accordance with the Operating Parameters''}
-    \item The BESS control system \textbf{physically refuses} the dispatch command
-    \item Non-conforming period counts as ``Seller Excused Hours''---no penalty to Seller
-    \item Operator \textit{cannot} exceed the constraint; it is enforced at the hardware/software level
-\end{itemize}
-\vspace{0.2cm}
-\pause
-\textbf{Implication}: newer batteries may show \textit{hard kinks} in dispatch behavior at constraint boundaries rather than the smooth forward-looking adjustment predicted for soft penalties.
 \end{frame}
 
 \section{Literature Review and Positioning}
@@ -368,315 +168,100 @@ Engineering foundation for the economic analysis.
 
 \begin{frame}{My Contribution}
     \begin{itemize}
-        \item Unlike consumer products studied in the warranty literature, grid-scale batteries have \textbf{multiple contractable dimensions of operational behavior}---cycle frequency, DoD, C-rate, SOC
-        \item These choices have potential consequences for \textit{electricity market outcomes} and welfare, not just the bilateral manufacturer-operator relationship
-        \item To my knowledge, no existing economics paper has systematically examined the dispatch effects or welfare costs of warranty cycling restrictions
+        \item Unlike consumer products studied in the warranty literature, grid-scale batteries have \textbf{multiple contractable dimensions of operational behavior}---cycle frequency, SOC
+        \item These choices have potential consequences for \textit{electricity market outcomes} and welfare
     \end{itemize}
-    \vspace{0.3cm}
-    This project aims to provide that analysis by combining tools from:
+\begin{itemize}
+        \item \textbf{Document and categorize} operational restrictions embedded in performance warranties using PPA-disclosed warranty terms
+    \item \textbf{Simulate dispatch under different regimes}, find costs (if any) of different contract designs
+\end{itemize}
+
+\end{frame}
+
+
+
+\section{Part 1: Documenting Battery Operational Restrictions}
+
+
+\begin{frame}{Part 1: Documenting Battery Operational Restrictions}
+\begin{itemize}
+    \item Utilities in Texas (PUCT) and New Mexico (NMPRC) must file PPAs and Energy Storage Agreements (ESAs) for regulatory approval, which sometimes specify exact cycle limits, SOC windows, and enforcement rules
+    \item (In the process of scraping) operational restrictions from publicly released ESAs for battery projects in New Mexico and Texas
     \begin{itemize}
-        \item Energy economics
-        \item Contract theory
-        \item Battery engineering
+        \item \textit{Why New Mexico?} tends to most often have unredacted ESA contract language
+        \item \textit{Why Texas?} Any ESA can be linked to granular public data on the individual battery's individual bids and dispatch behavior -- can be useful later on...
     \end{itemize}
-\end{frame}
-
-\section{Setting and Data}
-
-\begin{frame}{Why ERCOT?}
-Texas is the primary setting for this analysis.
-\vspace{0.3cm}
-\begin{itemize}
-    \item \textbf{Scale}: most installed grid-scale storage of any U.S. state (3.2 GW by early 2025, much more under construction)
-    \item \textbf{Market structure}: fully deregulated, energy-only market
-    \begin{itemize}
-        \item Exposes batteries to relatively undistorted real-time price signals
-        \item Gaps between observed and optimal dispatch more directly attributable to operational constraints than to market structure
-    \end{itemize}
-    \item \textbf{Price volatility}: Winter Storm Uri (2021), recurring summer scarcity events
-    \begin{itemize}
-        \item Creates high-value dispatch opportunities that make warranty restrictions especially costly
-    \end{itemize}
-    \item \textbf{Data transparency}: ERCOT 60-Day SCED disclosure provides unusually granular public data at the resource level
+    \item So far managed to scrape restrictions from \textbf{11 dockets}, covering \textbf{16 battery projects} filed between 2021 and 2025
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Data: LBNL Berkeley Lab PPA Dataset}
-Primary source of variation in warranty terms.
-\vspace{0.3cm}
-\begin{itemize}
-    \item LBNL has a collection of approximately \textbf{105 PV-plus-battery hybrid plants} with public PPAs
-    \item \textbf{Seel et al. (2021)} document operational restrictions---cycle limits, SOC requirements, DoD restrictions---disclosed as warranty conditions
-    \item Because PPAs are public documents filed with state utility commissions or FERC, the warranty terms they contain are the most transparent source of cross-sectional variation across installations
-    \item Status: data collection currently in progress
-\end{itemize}
+\begin{frame}{Texas: Operational Restrictions Across Dockets}
+\footnotesize
+\begin{tabular}{p{3.5cm} p{0.9cm} p{2.0cm} p{2.5cm}}
+\toprule
+\textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} \\
+\midrule
+Wildcat Ranch BESS (TX-57244) & 48 & 250 cap; excess to ${\sim}$365 at add'l charge & $<$50\% avg ceiling \\
+\addlinespace
+Carne ESA (TX-57760) & 65 & 340 cap; 2/day & $<$60\% avg ceiling; $<$20\% at rest \\
+\addlinespace
+Lorenzo/Chaves/ Roswell BESSes (TX-59034) & 50 ea. & 365; 5\%/day & $>$51\% avg \textit{floor}\\
+\addlinespace
+Wildcat Ranch II / Palo Duro / Mammoth Plains (TX-59034) & 120--150 & 365; 5\%/day & $>$51\% avg \textit{floor} \\
+\bottomrule
+\end{tabular}
+
+
 \end{frame}
 
-\begin{frame}{Data: ERCOT SCED Disclosure}
-Primary source of battery behavior data.
-\vspace{0.3cm}
-\begin{itemize}
-    \item ERCOT's \textbf{60-Day Security Constrained Economic Dispatch (SCED) Disclosure Report}
-    \item Resource-level, 5-minute interval dispatch data for every generator and energy storage resource since January 2011
-    \item Key variables:
-    \begin{itemize}
-        \item Telemetered output and load (actual MW)
-        \item Submitted energy offer curves (full price-quantity pairs)
-        \item Ancillary service awards across all ERCOT products
-    \end{itemize}
-    \item Crucially, releases the \textit{bids} that resources submit for energy and ancillary services---a useful outcome variable in descriptive analyses
-\end{itemize}
+\begin{frame}{New Mexico: Operational Restrictions Across Dockets}
+\footnotesize
+\begin{tabular}{p{3.5cm} p{0.8cm} p{1.9cm} p{3cm}}
+\toprule
+\textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} \\
+\midrule
+Sky Ranch (NM-21-00031) & 100 & 365; optional to 535 & $<$40\% BAASOC ceiling; penalty: $-$5 cycles  \\
+\addlinespace
+TAG Energy (NM-23-00251) & 50 & 365 hard cap & Manufacturer bounds only; no avg ceiling  \\
+\addlinespace
+Quail Ranch (NM-23-00353) & 100 & 365; 2/day & $<$60\% avg ceiling; $>$30\% at rest ($>$3 mo.)  \\
+\addlinespace
+Route 66 / Sky Ranch II (NM-23-00353) & 50/100 & 365; daily = mfr warranty only & $<$40\% BAASOC ceiling  \\
+\addlinespace
+Four Mile Mesa / Star Light / Windy Lane (NM-25-00048) & 68--100 & 365; 2/day & $<$50\% avg ceiling; min 3\% for $\leq$1 hr \\
+\bottomrule
+\end{tabular}
 \end{frame}
 
-\begin{frame}{Data: Linking and Supplementary Sources}
-\begin{itemize}
-    \item \textbf{EIA Form 860/923}: plant-level identification (name, operator, location, capacity, technology) to link the PPA dataset to ERCOT SCED
-    \vspace{0.2cm}
-    \item \textbf{Potential industry sources}:
-    \begin{itemize}
-        \item NEC Energy Solutions, IronGrid---companies specializing in adaptive battery warranties
-        \item May provide structured warranty data for standalone ERCOT storage units not in LBNL sample
-        \item May also provide examples of batteries that modified warranties over time (useful for DiD)
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\section{Proposed Empirical Strategies}
-
-\begin{frame}{Empirical Strategy: Overview}
-Data collection is currently in progress; no analyses yet. Three planned empirical exercises:
-\vspace{0.3cm}
-\begin{enumerate}
-    \item \textbf{Descriptive comparisons across warranty types}: document dispatch differences across the cross-section of batteries
-    \item \textbf{Difference-in-differences}: exploit manufacturer-level warranty policy changes
-    \item \textbf{Battery dispatch simulation}: bound welfare magnitudes under different warranty regimes
-\end{enumerate}
-\end{frame}
-
-\begin{frame}{Strategy 1: Descriptive Comparisons}
-First step: systematically categorize PPA-disclosed warranty terms into ``more'' vs. ``less'' restrictive types.
-\vspace{0.2cm}
-\begin{itemize}
-    \item Compare distributions of:
-    \begin{itemize}
-        \item Daily cycle counts
-        \item Ancillary service participation rates
-        \item Discharge response to unexpected price spikes
-    \end{itemize}
-    \item \textbf{Price spike definition}: settlement point prices $>3\sigma$ above historical hour mean, associated with unforecasted supply outages (not weather shocks already in operator forecasts)
-    \item \textbf{Predictions}:
-    \begin{itemize}
-        \item Cycle-restricted batteries will show lower discharge intensity during price spikes
-        \item Lower ancillary service award rates relative to physical capacity
-        \item Effect concentrated later in the year when cycle budgets are most depleted
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Strategy 1: Identification Concerns}
-\textbf{Central challenge}: batteries with more restrictive warranties may differ from less-restricted ones along many dimensions.
-\vspace{0.2cm}
-\begin{itemize}
-    \item Ownership, technology, vintage, market position
-    \item Larger/more sophisticated operators may negotiate more flexible warranty terms \textit{and} dispatch more efficiently for unrelated reasons
-\end{itemize}
-
-\vspace{0.3cm}
-The descriptive analysis documents these potential confounds systematically. The DiD design (next) partially addresses them by holding the battery fixed.
-
-\vspace{0.3cm}
-Even as purely descriptive, the cross-section reveals whether variation in the data is rich enough to support causal analyses.
-\end{frame}
-
-\begin{frame}{Strategy 2: Difference-in-Differences}
-Several manufacturers shifted from rigid to flexible warranty structures between 2023 and 2025.
-\vspace{0.2cm}
-\begin{itemize}
-    \item Candidate treatment event: Trina Storage's early-2025 adoption of rolling-average flexible warranties
-    \begin{itemize}
-        \item Replaced a fixed-cycle-count regime with a continuous C-rate cap
-    \end{itemize}
-    \item Access to NEC/IronGrid data would expand the set of ``treated'' batteries
-\end{itemize}
-
-\vspace{0.3cm}
-\textbf{DiD design}: Compare cycling intensity, ancillary service participation, and extreme-event dispatch response between:
-\begin{itemize}
-    \item Treated: batteries from manufacturers that revised their warranties
-    \item Controls: batteries from manufacturers that did not
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Strategy 2: Identifying Assumption and Backup}
-\textbf{Key identifying assumption}: parallel pre-treatment trends in dispatch behavior.
-
-\vspace{0.3cm}
-\textbf{Fallback if parallel trends fail}:
-\begin{itemize}
-    \item An event study for a single battery comparing dispatch before vs. after its warranty revision
-    \item Less generalizable, but still potentially informative about the within-battery response to relaxing contractual constraints
-\end{itemize}
-
-\vspace{0.3cm}
-Effectively absorbs time-invariant differences across installations that the cross-sectional analysis cannot.
-\end{frame}
-
-\begin{frame}{Strategy 3: Battery Dispatch Simulation}
-To get a rough sense of welfare magnitudes, solve the optimal dispatch problem under four warranty regimes:
+\begin{frame}{Part 2: Simulating optimal dispatch}
+Simulate optimal dispatch under five regimes, given the \textit{same} expectations around future prices and physical degradation costs:
 \vspace{0.2cm}
 \begin{itemize}
     \item \textbf{Unconstrained}: physical degradation costs only (calibrated from Xu et al., 2018)
-    \item \textbf{1-cycle-per-day limit}
+    \item \textbf{2-cycle-per-day limit}
     \item \textbf{Annual throughput cap} equivalent to 365 cycles
-    \item \textbf{0.25C power cap}
+    \item \textbf{SOC ceiling ($<50\%$)}
+    \item \textbf{SOC floor ($>51\%$)}
 \end{itemize}
 
 \vspace{0.3cm}
-Algorithm predicts prices given observable information (previous period price, day-ahead price) and solves optimal bidding.
+Produces \textit{upper-bound} estimate of profit loss attributable to each type of restriction
 
-\vspace{0.3cm}
-Produces \textit{upper-bound} estimate of profit loss attributable to each type of restriction, under the assumption operators otherwise dispatch optimally.
-\end{frame}
-
-\begin{frame}{Strategy 3: Connection to the Empirical Design}
-    The simulation and empirical strategies complement each other:
-    \vspace{0.2cm}
-    \begin{itemize}
-        \item \textbf{Empirical analyses} (Strategies 1 \& 2) identify whether warranty restrictions distort dispatch in practice
-        \item \textbf{Simulation} (Strategy 3) asks \textit{how much} of the observed gap is predicted by the constraint itself, and bounds the maximum welfare loss
-        \item If simulated and empirical effects align, gives confidence the mechanism is warranty-driven
-        \item If empirical effects exceed simulated ones, points to forward-looking behavior or strategic conservation of cycles beyond what the hard constraint requires
-    \end{itemize}
-\end{frame}
-
-\section{Welfare Analysis}
-
-\begin{frame}{Potential Welfare Analysis}
-The social cost of warranty-induced distortions decomposes into three components:
-\vspace{0.2cm}
-\begin{enumerate}
-    \item \textbf{Foregone arbitrage profits}---the private cost to the battery operator
-    \item \textbf{Lost ancillary service value}---shadow price of frequency regulation and spinning reserves withheld due to restrictions
-    \item \textbf{Environmental externalities}---increased fossil peaker dispatch that replaces constrained battery output
-\end{enumerate}
-\end{frame}
-
-\begin{frame}{Component 1: Foregone Arbitrage Profits}
 \begin{itemize}
-    \item Computed per SCED interval as:
-    \[
-    \text{LMP}_t \times (q^*_{t,\text{unconstrained}} - q_{t,\text{warranty-constrained}})
-    \]
-    \item Minus degradation costs calculated from engineering models (Xu et al., 2018)
-    \vspace{0.3cm}
-    \item This is the private cost---what operators would be willing to pay to relax the warranty constraint
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Component 2: Lost Ancillary Service Value}
-Capturing the shadow price of frequency regulation and spinning reserve capacity withheld due to warranty restrictions.
-\vspace{0.2cm}
-\begin{itemize}
-    \item ERCOT ancillary service market clearing prices are directly observable from SCED data
-    \item Provides market-based valuations for foregone regulatory services
-    \item \textbf{Frequency regulation} requires precisely the rapid cycling that cycle-count warranties restrict
-    \item Ancillary services account for a substantial share of battery revenues in ERCOT
-    \item Expect this component to be quantitatively significant---though magnitude is an empirical question
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Component 3: Environmental Externalities}
-If constrained batteries force greater reliance on fossil fuel peakers.
-\vspace{0.2cm}
-\begin{itemize}
-    \item Follow the merit-order counterfactual approach of:
-    \begin{itemize}
-        \item Cicala (2022)
-        \item Gonzales, Ito, and Reguant (2023)
-    \end{itemize}
-    \item Compute marginal emissions rate of the relevant fossil resource during periods when batteries would have dispatched under the unconstrained optimum but did not
-    \item Multiply by the social cost of carbon
-    \vspace{0.3cm}
-    \item This captures the social cost that goes beyond private losses borne by operators
-\end{itemize}
-\end{frame}
-
-\section{Conclusion}
-
-\begin{frame}{Summary}
-\begin{itemize}
-    \item Grid-scale batteries are valued for their flexibility in electricity markets
-    \item But performance warranties impose binding operational restrictions that may substantially distort dispatch
-    \item Central hypothesis: \textbf{contractual frictions---not only physical degradation or market power---represent a first-order barrier to efficient battery dispatch}
-    \item These frictions impose social costs beyond the private losses borne by operators
+    \item In the future: compare to socially-optimal dispatch? (peak load reduction, fossil emissions)
 \end{itemize}
 
-\vspace{0.3cm}
-Rigid warranty structures may systematically undermine the flexibility value that justifies investment in grid-scale storage.
 \end{frame}
 
-\begin{frame}{What I Hope to Contribute}
-\begin{enumerate}
-    \item \textbf{Document and categorize} operational restrictions embedded in performance warranties using PPA-disclosed warranty terms
-    \item \textbf{Describe the relationship} between warranty restrictiveness and dispatch behavior, exploiting cross-sectional variation and temporal variation from manufacturer policy shifts
-    \item \textbf{Quantify the welfare cost}, decomposing losses into foregone arbitrage profits, lost ancillary services, and fossil emissions externalities
-\end{enumerate}
-\vspace{0.3cm}
-Broader aim: improve our understanding of battery dispatch decisions and constraints in practice, and of the benefits of flexible warranty design in certain markets.
-\end{frame}
 
-\begin{frame}{Open Questions for Discussion}
+
+
+\begin{frame}{A very simple dispatch model...}
+
 \begin{itemize}
-    \item How to handle endogeneity of warranty choice (larger operators may negotiate better terms)?
-    \item Is a structural demand-side model of warranty contracting worth building, or is reduced-form evidence sufficient?
-    \item Are there additional natural experiments---beyond manufacturer policy changes---that could help identification?
-    \item What's the right counterfactual dispatch benchmark: physical degradation, socially optimal, or profit-maximizing?
-    \item Generalizability: do results from ERCOT extend to CAISO, PJM, or regulated markets?
-\end{itemize}
-
-\vspace{0.4cm}
-\begin{center}
-    \textbf{Thank you!}
-\end{center}
-\end{frame}
-
-\begin{frame}{References}
-\footnotesize
-\begin{itemize}
-    \item Attia et al. (2022). Knees in lithium-ion battery aging. \textit{J. Electrochem. Soc.} 169: 060517.
-    \item Butters, Dorsey, and Gowrisankaran (2025). Soaking up the sun. \textit{Econometrica} 93(3): 891--927.
-    \item Cicala (2022). Imperfect markets vs imperfect regulation. \textit{AER} 112(2): 409--441.
-    \item Denholm and Margolis (2018). Energy storage for peaking capacity in CA. NREL/TP-6A20-70905.
-    \item Emons (1988). Warranties, moral hazard, and lemons. \textit{JET} 46(1): 16--33.
-    \item Emons (1989). Limitation of warranty duration. \textit{JIE} 37: 287--301.
-    \item Gonzales, Ito, and Reguant (2023). Investment effects of market integration. \textit{Econometrica} 91(5): 1659--1693.
-    \item Lamp and Samano (2022). Large-scale battery storage and arbitrage. \textit{Energy Economics} 107.
-    \item Liu and Wang (2025). Optimal battery warranty design. Working Paper.
-    \item Reynolds (2025). Battery storage, operating reserves, and scarcity pricing. U. Arizona WP Econ-WP-25-01.
-    \item Seel, Warner, Mills (2021). Influence of Business Models on PV-Battery Dispatch. LBNL.
-    \item Xu et al. (2018). Lithium-ion battery degradation. \textit{IEEE Smart Grid} 9(2): 1131--1140.
-\end{itemize}
-\end{frame}
-
-\section{Appendix: Bidding Model}
-
-\begin{frame}{Bidding model: ex-ante quantity-only}
-Simplified structural framework underlying the Strategy 3 dispatch simulation.
-
-\vspace{0.2cm}
-\begin{itemize}
-    \item At the start of hour $h$, the battery commits a dispatch quantity based on the previous-period price $p_{h-1}$
-    \item The committed quantity clears at the realized $p_h$ (no step-bid---always clears)
-    \item \textbf{Continuous SoC}---no five-level discretization
-    \item Warranty constraints enter cleanly as either hard bounds or Lagrangian shadow prices
-\end{itemize}
-
-\vspace{0.2cm}
-\textbf{Relation to alternatives:}
-\begin{itemize}
-    \item More realistic than \textit{ex-post} self-scheduling (operator doesn't observe $p_h$ before committing)
-    \item Simpler than \textit{step-bid} models, which suffer from a joint price-quantity identification problem
-    \item Broadly consistent with observed CAISO/ERCOT practice of forward quantity commitment
+    \item At the start of hour $h$, the battery commits a dispatch quantity (MW) based on their expectation of future price $p_h$
+    \item The committed quantity clears at the realized $p_h$
+    \item These batteries are basically self-scheduled batteries in ERCOT
 \end{itemize}
 \end{frame}
 
@@ -684,12 +269,12 @@ Simplified structural framework underlying the Strategy 3 dispatch simulation.
 \textbf{Choice and state variables:}
 \begin{itemize}
     \item $g_h \geq 0$: discharge quantity; $\;l_h \geq 0$: charge quantity; $\;g_h \cdot l_h = 0$
-    \item $s_h \in [0, E_{\max}]$: state of charge (continuous)
+    \item $s_h \in [0, k]$: state of charge 
     \item $p_h$: settlement-point price
 \end{itemize}
 
 \vspace{0.2cm}
-\textbf{SoC dynamics} with round-trip efficiency $\delta \in (0,1)$:
+\textbf{SoC dynamics} with round-trip efficiency $\delta = 0.85$ (guaranteed by warranties):
 \[
 s_{h+1} = s_h - g_h + \delta\, l_h
 \]
@@ -698,131 +283,38 @@ s_{h+1} = s_h - g_h + \delta\, l_h
 \[
 \pi_h = (g_h - l_h)\,p_h \;-\; \frac{c\,g_h}{k}
 \]
-
-\textbf{Price process}---AR(1) in levels with conditional mean
-\[
-\bar p_h \;\equiv\; \mathbb{E}[p_h\mid p_{h-1}] \;=\; \theta_h\, p_{h-1} + \mu_h.
-\]
-\end{frame}
-
-\begin{frame}{Bellman equation}
-Because quantities are committed ex-ante, $s_{h+1}$ is deterministic given $(g_h, l_h)$. Define the integrated value
-\[
-\tilde V_{h+1}(s,\,p_{h-1}) \;:=\; \mathbb{E}\!\left[\,V_{h+1}(s, p_h)\,\middle|\,p_{h-1}\right].
-\]
-
-\vspace{0.2cm}
-The value function satisfies
-\[
-V_h(s_h, p_{h-1}) = \max_{g_h,\,l_h}\Big\{(g_h - l_h)\,\bar p_h - \tfrac{c\,g_h}{k} + \tilde V_{h+1}(s_h - g_h + \delta l_h,\, p_{h-1})\Big\}
-\]
-subject to feasibility (SoC bounds, power limits).
-
-\vspace{0.3cm}
-Within-period price uncertainty enters only through $\tilde V_{h+1}$; the expected price $\bar p_h$ replaces the realized $p_h$ in the FOC.
-\end{frame}
-
-\begin{frame}{First-order conditions}
-At most one of $g_h, l_h$ is positive (assuming $c \geq 0$ and $\delta < 1$).
-
-\vspace{0.2cm}
-\textbf{Discharge} ($g_h > 0$):
-\[
-\bar p_h - \frac{c}{k} \;=\; \frac{\partial \tilde V_{h+1}}{\partial s}\big(s_h - g_h,\, p_{h-1}\big)
-\]
-
-\textbf{Charge} ($l_h > 0$):
-\[
-\bar p_h \;=\; \delta\cdot\frac{\partial \tilde V_{h+1}}{\partial s}\big(s_h + \delta l_h,\, p_{h-1}\big)
-\]
-
-\textbf{Idle} whenever
-\[
-\delta\,\tilde V'_s(s_h, p_{h-1}) \;<\; \bar p_h \;<\; \frac{c}{k} + \tilde V'_s(s_h, p_{h-1}).
-\]
-
-\vspace{0.2cm}
-Classical water-storage structure: current expected price equated to marginal future value of SoC at the post-decision state.
-\end{frame}
-
-\begin{frame}{Threshold policy}
-At each $(s_h, p_{h-1})$:
 \begin{itemize}
-    \item \textbf{Discharge} iff $\;\bar p_h > c/k + \tilde V'_s(s_h, p_{h-1})$
-    \item \textbf{Charge} iff $\;\bar p_h < \delta\,\tilde V'_s(s_h, p_{h-1})$
-    \item Otherwise \textbf{idle}
+    \item Cycling cost: calibrate to physical degradation experiments
 \end{itemize}
 
-\vspace{0.3cm}
-\textbf{Interpretation:}
-\begin{itemize}
-    \item $\tilde V'_s$ is the shadow value of SoC---what a marginal MWh of stored energy is worth in expectation going forward
-    \item Discharge threshold = shadow value $+$ marginal cycling cost
-    \item Round-trip efficiency $\delta < 1$ and cycling cost $c/k$ together create the idle band
-    \item \textbf{Concavity} of $\tilde V_{h+1}$ in $s$ pins down quantity uniquely---without it, only the thresholds are identified
-\end{itemize}
 \end{frame}
 
-\begin{frame}{Warranty constraints: hard SoC bounds}
-Warranty language often specifies per-period bounds such as ``SoC must remain in $[s^{\min}, s^{\max}]$.''
+\begin{frame}{Model setup}
 
-\vspace{0.2cm}
-\textbf{Modification:} only the feasibility set changes---
+
+\textbf{AR(1) price beliefs:}
 \[
-g_h \leq \min(s_h - s^{\min},\,\bar Q_g), \qquad l_h \leq \min\!\left(\tfrac{s^{\max}-s_h}{\delta},\,\bar Q_l\right).
-\]
+\bar p_h \;\equiv\; \mathbb{E}[p_h\mid p_{h-1}] \;=\; \theta_h\, (p_{h-1} - p_{\text{DAM}, h-1}) + \phi_h p_{\text{DAM}} + \mu_h.
+\], iid normal errors.
 
 \vspace{0.2cm}
-\textbf{Effect on equilibrium behavior:}
-\begin{itemize}
-    \item FOCs unchanged; Lagrange multipliers $\mu^{\min}_h, \mu^{\max}_h \geq 0$ emerge when bounds bind
-    \item $\tilde V'_s$ spikes near the floor---battery can't sell when near empty---widening the idle band sharply
-    \item Concavity preserved; the DP remains well-posed
-    \item Implementation cost is negligible: just tighten the box in the 1-D root-find
-\end{itemize}
+\textbf{Bellman equation}: 
+\begin{align*}
+    V_h(s_h, p_{h-1}) =  \max_{g_h,\,l_h}\Big\{(&g_h - l_h)\,\bar p_h - \tfrac{c\,g_h}{k} + \\ &\mathbb{E}[ V_{h+1}(s_h - g_h + \delta l_h,\, p_{h-1}) | p_{h-1}]\Big\}
+\end{align*}
+
 \end{frame}
 
-\begin{frame}{Warranty constraints: annual cycle cap}
-Cycle caps couple decisions across all 8{,}760 hours, breaking per-day stationarity.
-
-\vspace{0.2cm}
-\textbf{Lagrangian decoupling.} Shadow price $\lambda \geq 0$ on the annual constraint
-\[
-\mathbb{E}\!\left[\,\sum_{\text{year}} g_h\,\right] \;\leq\; N \cdot E_{\max}.
-\]
-
-\vspace{0.2cm}
-Modified discharge FOC:
-\[
-\bar p_h - \frac{c}{k} - \lambda \;=\; \frac{\partial \tilde V_{h+1}}{\partial s}(s_h - g_h,\, p_{h-1})
-\]
-
-\begin{itemize}
-    \item $\lambda$ adds directly to the marginal cycling cost---widens the idle band by exactly $\lambda$
-    \item Interpretable as the \textbf{shadow value of a cycle} (\$/MWh of foregone discharge)---the economic object the warranty literature wants to quantify
-    \item Outer loop: bisect $\lambda$ until simulated annual throughput equals the cap
-    \item Per-day DP structure is preserved; annual aggregation enters only through $\lambda$
-\end{itemize}
+\begin{frame}{Future steps / requested feedback}
+    \begin{itemize}
+        \item Continuing to scrape more PPAs/ESAs for operational restrictions
+        \begin{itemize}
+            \item Acquiring more flexible/complicated operational terms from energy solution companies
+        \end{itemize}
+        \item Adding various different constraints/regimes to dispatch simulation model
+        \item How to pitch the economics of this research question?
+    \end{itemize}
 \end{frame}
 
-\begin{frame}{Solution algorithm}
-Backward induction on $V_h(s, p_{h-1})$ over a 2-D grid.
-
-\vspace{0.2cm}
-For each $h = 24, \dots, 1$ and each $(s_h, p_{h-1})$:
-\begin{enumerate}
-    \item Compute $\bar p_h = \theta_h p_{h-1} + \mu_h$
-    \item Integrate $V_{h+1}(s, p)$ against the conditional density $p_h \mid p_{h-1}$ to form $\tilde V_{h+1}$
-    \item Solve the discharge FOC (1-D root-find in $g_h$) and the charge FOC analogously
-    \item Accept whichever yields positive gain over idling; plug back into the Bellman
-    \item Interpolate $\tilde V$ in $s$ with a shape-preserving spline to keep $\partial \tilde V/\partial s$ monotone
-\end{enumerate}
-
-\vspace{0.2cm}
-\textbf{Outer loop} when cycle-capped: bisect $\lambda$ until annual throughput binds the warranty.
-
-\vspace{0.2cm}
-Complexity $\mathcal{O}(|S|\cdot|P|\cdot H)$ per $\lambda$ iteration. Runs in seconds on $|S|=100,\;|P|=50,\;H=24$.
-\end{frame}
 
 \end{document}
