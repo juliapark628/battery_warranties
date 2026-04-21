@@ -42,9 +42,9 @@
 \begin{frame}{Roadmap}
     \begin{enumerate}
         \item Institutional background on battery operational restrictions
-        \item Literature review
-        \item Data sources
-        \item Proposed bidding model simulation
+        \item Literature and contribution
+        \item Documenting operational restrictions
+        \item Proposed simulated battery dispatch model 
         \item Future steps
     \end{enumerate}
 \end{frame}
@@ -86,96 +86,18 @@ Reasons for change:
 
 \section{Literature Review and Positioning}
 
-\begin{frame}{Literature: Electricity Storage Arbitrage}
-How storage facilities optimize dispatch, how they affect market prices, and frictions preventing storage from realizing theoretical value.
-
-\vspace{0.3cm}
+\begin{frame}{Literature and Contribution}
 \begin{itemize}
-    \item \textbf{Butters, Dorsey, and Gowrisankaran (2025)}: dynamic market equilibrium model of battery dispatch in CAISO; first 5,000 MWh of storage reduces wholesale prices by 5.6\%
-    \begin{itemize}
-        \item Their framework (dynamic programming with physical degradation costs) provides a starting point for my bidding simulation
-        \item But their degradation costs are physical---warranty constraints may be substantially more restrictive
-    \end{itemize}
-    \item \textbf{Lamp and Samano (2022)}: document CAISO battery dispatch 2018--2019, find behavior only partially consistent with optimal arbitrage
-    \begin{itemize}
-        \item Attribute deviations to forecasting and strategic behavior
-        \item But they don't observe warranty terms---my project asks whether warranty terms explain part of the residual
-    \end{itemize}
+    \item \textbf{Electricity storage arbitrage}: Optimal battery dispatch, effects on market prices, frictions preventing storage from realizing theoretical value \\
+    \textcolor{gray}{\small Butters, Dorsey, and Gowrisankaran (2025); Lamp and Samano (2022); Reynolds (2025); Denholm and Margolis (2018)}
+    \item \textbf{Contract theory and warranties}: Warranty design under asymmetric information, moral hazard, and risk allocation in bilateral contracting \\
+    \textcolor{gray}{\small Emons (1988); Emons (1989); Liu and Wang (2025)}
+    \item \textbf{Battery degradation}: Engineering foundation relating operational behavior (DoD, C-rate, SOC, cycles) to capacity loss \\
+    \textcolor{gray}{\small Xu et al.\ (2018); Attia et al.\ (2022)}
 \end{itemize}
-\end{frame}
-
-\begin{frame}{Literature: Electricity Storage Arbitrage, cont'd}
+\textbf{Contribution}: 
 \begin{itemize}
-    \item \textbf{Reynolds (2025)}: documents that 66\% of ERCOT storage is classified for arbitrage and 44\% for ancillary services (with overlap)
-    \begin{itemize}
-        \item Context for welfare that batteries provide
-    \end{itemize}
-    \item \textbf{Denholm and Margolis (2018)}: estimates storage required to meet California peaking demand under increasing solar
-    \begin{itemize}
-        \item Useful for situating the social stakes of dispatch inefficiency
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Literature: Contract Theory and Warranties}
-How warranty terms emerge from bilateral contracting, how they allocate risk, govern moral hazard.
-
-\vspace{0.2cm}
-Prior focus: consumer durable goods---cars, appliances, electronics---where buyer usage affects product longevity.
-
-\vspace{0.2cm}
-The battery setting differs in two ways:
-\begin{enumerate}
-    \item The buyer's dispatch decisions affect \textit{wholesale electricity market outcomes}, so warranty design has social welfare consequences beyond the bilateral relationship
-    \item Unlike most consumer goods (degrading along 1--2 dimensions), batteries degrade via \textit{many} behaviors (DoD vs. cycles vs. SOC vs. C-rate, etc.), and warranty terms vary in restrictiveness across these behaviors---often depending on monitorability
-\end{enumerate}
-\end{frame}
-
-\begin{frame}{Literature: Contract Theory, cont'd}
-\begin{itemize}
-    \item \textbf{Emons (1988)}: under asymmetric information, warranties serve as both insurance and quality signals; moral hazard induces excessive product use
-    \begin{itemize}
-        \item Warranty cycling restrictions are one instrument for managing this
-    \end{itemize}
-    \item \textbf{Emons (1989)}: longer warranties require more intensive monitoring to remain incentive-compatible
-    \begin{itemize}
-        \item Directly relevant to 15--20 year battery warranties, where cumulative cycle counts are both technically feasible and contractually specified
-    \end{itemize}
-    \item \textbf{Liu and Wang (2025)}: industry review of potentially optimal battery warranty designs from the manufacturer's perspective
-    \begin{itemize}
-        \item This project complements theirs by examining the \textit{market-level} implications
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Literature: Battery Degradation}
-Engineering foundation for the economic analysis.
-
-\vspace{0.2cm}
-\begin{itemize}
-    \item \textbf{Xu et al. (2018)}: most widely used semi-empirical degradation model
-    \begin{itemize}
-        \item Separates aging into calendar aging (temperature, SOC level) and cycle aging (DoD, C-rate, cumulative throughput)
-    \end{itemize}
-    \item \textbf{Attia et al. (2022)}: document non-linear aging in lithium-ion batteries, including ``capacity knees''---abrupt inflection points where degradation accelerates
-    \begin{itemize}
-        \item Simple linear throughput approximations may misstate marginal degradation costs
-        \item Supports conservative warranty design near the knee threshold
-        \item Implies batteries operating well below the knee face lower marginal degradation costs than linear models suggest
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{My Contribution}
-    \begin{itemize}
-        \item Unlike consumer products studied in the warranty literature, grid-scale batteries have \textbf{multiple contractable dimensions of operational behavior}---cycle frequency, SOC
-        \item These choices have potential consequences for \textit{electricity market outcomes} and welfare
-    \end{itemize}
-\begin{itemize}
-        \item \textbf{Document and categorize} operational restrictions embedded in performance warranties using PPA-disclosed warranty terms
-    \item \textbf{Simulate dispatch under different regimes}, find costs (if any) of different contract designs
-\end{itemize}
-
+    \item first to document operational restrictions embedded in grid-scale battery warranties \item simulate profit cost of different contract designs
 \end{frame}
 
 
