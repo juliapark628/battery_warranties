@@ -1,0 +1,286 @@
+\documentclass{beamer}
+\usepackage{bbm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{bm}
+\setbeamertemplate{footline}[frame number]
+
+
+%Information to be included in the title page:
+\title{Grid-Scale Battery Dispatch Distortions \\ Due to Manufacturer Warranties}
+\author{Julia Park}
+\date{IO Workshop \\ April 20, 2026}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}{Motivation}
+\begin{itemize}
+    \item Grid-scale batteries have expanded rapidly in U.S. electricity markets
+    \begin{itemize}
+        \item Over 26 GW of installed capacity by early 2025
+        \item Texas (ERCOT) alone hosts approximately 3.2 GW (Reynolds, 2025)
+    \end{itemize}
+    \pause
+    \item A primary economic rationale for this investment is \textbf{flexibility}
+    \begin{itemize}
+        \item Unlike intermittent renewables or fossil-fuel generators with startup costs, batteries can respond within seconds
+        \item Uniquely valuable for smoothing unexpected spikes in demand
+    \end{itemize}
+    \pause
+    \item But in practice, battery operation is not unconstrained
+    \begin{itemize}
+        \item Batteries face contractual operational restrictions from offtake agreements / PPAs, warranties, etc.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Research question}: \textit{How do contractual operational restrictions for grid-scale battery distort dispatch away from profit-maximizing or socially optimal behavior?}
+\end{frame}
+
+
+\begin{frame}{Policy relevance (1): Capacity accreditation}
+\begin{itemize}
+    \item Capacity markets and resource-adequacy programs \textbf{derate} nameplate capacity based on what a resource can reliably deliver in critical hours
+    \begin{itemize}
+        \item FERC Order 841 requires accreditation methods to allow such a derate for ESRs
+        \item Most ISOs impose duration requirements (e.g., ISO-NE: 2 sustained hours; MISO and CAISO: 4) or probabilistic metrics (ELCC in PJM, SPP)
+    \end{itemize}
+    \pause
+    \item For storage, accreditation is fundamentally about \textit{operational assumptions} \\
+    \textcolor{gray}{\small Singhal et al.\ (2024), \S4.4.6: ``difficult to quantify their contribution without making operational assumptions and simulating the operational time frame of those critical periods''}
+    \begin{itemize}
+        \item Minimum SOC floors limit dischargeable energy
+        \item Round-trip efficiency and degradation erode available capacity
+    \end{itemize}
+    \pause
+    \item If contract/warranty restrictions systematically bind during critical hours, nameplate-based accreditation \textbf{overstates} true capacity contribution
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Policy relevance (2): Reference levels and market power}
+\begin{itemize}
+    \item ISOs mitigate market power by comparing offers to a \textbf{reference level} --- an estimate of short-run marginal cost
+    \item For energy-limited resources, SRMC is mostly \textit{opportunity cost}, which is hard to estimate:
+    \begin{itemize}
+        \item CAISO: expected energy + variable O\&M + opportunity cost, with a 10\% adder
+        \item ERCOT: mitigated offer caps based on adjusted prior prices at the resource's location
+        \item NYISO: rolling 30-day LBMP-based dynamic opportunity cost \\
+        \textcolor{gray}{\small (Singhal et al.\ 2024, \S4.4.4)}
+    \end{itemize}
+    \pause
+    \item A high battery offer during scarcity could reflect either:
+    \begin{enumerate}
+        \item Legitimate opportunity costs driven by cycle/SOC constraints, or
+        \item Exercise of market power (energy withholding)
+    \end{enumerate}
+    \item Current reference-level methods do not cleanly distinguish these \\
+    \textcolor{gray}{\small Singhal et al.\ (2024) call for reference levels to incorporate ``the impact of excessive cycling on battery storage warranties, through the incorporation of opportunity cost adders''}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Roadmap}
+    \begin{enumerate}
+        \item Institutional background on battery operational restrictions
+        \item Literature and contribution
+        \item Documenting operational restrictions
+        \item Proposed simulated battery dispatch model 
+        \item Future steps
+    \end{enumerate}
+\end{frame}
+
+\section{Institutional Background}
+
+\begin{frame}{Context: Where do operational restrictions come from?}
+\begin{itemize}
+    \item \textbf{Performance Warranties}: guarantee from battery manufacturer that the storage system will maintain specific performance standards over 15-20 years, if battery is operated within certain constraints
+    \item \textbf{Power Purchase Agreements (PPAs) / Energy Storage Agreement (ESAs)}: financial agreement to purchase power between operator and offtaker. 
+    \begin{itemize}
+        \item These days, the operational restrictions from these are usually harmonized (although interviews have told me that in the past that wasn't always the case...)
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Context: Common types of operating restrictions}
+Restrictions imposed on battery operation to prevent degradation:
+\begin{itemize}
+    \item \textbf{Cycle frequency limits}: cap on full charge-discharge cycles per day or per year (typically clustered around 1--1.5 cycles/day)
+    \item \textbf{State-of-charge requirements}: constrain annual average SOC, commonly below or above 50\%
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Context: Trends in battery warranties}
+The industry has been interested in how to design these operational restrictions such that they are less \textbf{restrictive}  (e.g. limits on number of cycles) and more \textbf{flexible} warranties (e.g. rolling averages, charge/discharge rates over the day).
+
+\vspace{0.3cm}
+Reasons for change:
+\begin{itemize}
+    \item Batteries earn much of their money arbitraging on a few high-demand days, rather than just once every day, so restrictions can prevent optimal dispatch
+    \begin{itemize}
+        \item \textit{``Running a BESS with an inflexible guarantee is like paying rent all year for an umbrella shop, but being forced to keep the same daily stock; so when the rainy week comes, you sell out in the first hour and miss the payoff"} \textcolor{gray}{-Gregory Green, BlackVolt}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Literature Review and Positioning}
+
+\begin{frame}{Literature and Contribution}
+\begin{itemize}
+    \item \textbf{Electricity storage arbitrage}: Optimal battery dispatch, effects on market prices, frictions preventing storage from realizing theoretical value \\
+    \textcolor{gray}{\small Butters, Dorsey, and Gowrisankaran (2025); Lamp and Samano (2022); Reynolds (2025); Denholm and Margolis (2018)}
+    \item \textbf{Contract theory and warranties}: Warranty design under asymmetric information, moral hazard, and risk allocation in bilateral contracting \\
+    \textcolor{gray}{\small Emons (1988); Emons (1989); Liu and Wang (2025)}
+    \item \textbf{Battery degradation}: Engineering foundation relating operational behavior (DoD, C-rate, SOC, cycles) to capacity loss \\
+    \textcolor{gray}{\small Xu et al.\ (2018); Attia et al.\ (2022)}
+\end{itemize}
+\textbf{Contribution}:
+\begin{itemize}
+    \item first to document operational restrictions embedded in grid-scale battery warranties
+    \item simulate profit cost of different contract designs
+\end{itemize}
+\end{frame}
+
+
+
+\section{Part 1: Documenting Battery Operational Restrictions}
+
+
+\begin{frame}{Part 1: Documenting Battery Operational Restrictions}
+\begin{itemize}
+    \item Utilities in Texas (PUCT) and New Mexico (NMPRC) must file PPAs and Energy Storage Agreements (ESAs) for regulatory approval, which sometimes specify exact cycle limits, SOC windows, and enforcement rules
+    \item (In the process of scraping) operational restrictions from publicly released ESAs for battery projects in New Mexico and Texas
+    \begin{itemize}
+        \item \textit{Why New Mexico?} tends to most often have unredacted ESA contract language
+        \item \textit{Why Texas?} Any ESA can be linked to granular public data on the individual battery's individual bids and dispatch behavior -- can be useful later on...
+    \end{itemize}
+    \item So far managed to scrape restrictions from \textbf{11 dockets}, covering \textbf{16 battery projects} filed between 2021 and 2025
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Texas: Operational Restrictions Across Dockets}
+\footnotesize
+\begin{tabular}{p{3.5cm} p{0.9cm} p{2.0cm} p{2.5cm}}
+\toprule
+\textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} \\
+\midrule
+Wildcat Ranch BESS (TX-57244) & 48 & 250 cap; excess to ${\sim}$365 at add'l charge & $<$50\% avg ceiling \\
+\addlinespace
+Carne ESA (TX-57760) & 65 & 340 cap; 2/day & $<$60\% avg ceiling; $<$20\% at rest \\
+\addlinespace
+Lorenzo/Chaves/ Roswell BESSes (TX-59034) & 50 ea. & 365; 5\%/day & $>$51\% avg \textit{floor}\\
+\addlinespace
+Wildcat Ranch II / Palo Duro / Mammoth Plains (TX-59034) & 120--150 & 365; 5\%/day & $>$51\% avg \textit{floor} \\
+\bottomrule
+\end{tabular}
+
+
+\end{frame}
+
+\begin{frame}{New Mexico: Operational Restrictions Across Dockets}
+\footnotesize
+\begin{tabular}{p{3.5cm} p{0.8cm} p{1.9cm} p{3cm}}
+\toprule
+\textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} \\
+\midrule
+Sky Ranch (NM-21-00031) & 100 & 365; optional to 535 & $<$40\% BAASOC ceiling; penalty: $-$5 cycles  \\
+\addlinespace
+TAG Energy (NM-23-00251) & 50 & 365 hard cap & Manufacturer bounds only; no avg ceiling  \\
+\addlinespace
+Quail Ranch (NM-23-00353) & 100 & 365; 2/day & $<$60\% avg ceiling; $>$30\% at rest ($>$3 mo.)  \\
+\addlinespace
+Route 66 / Sky Ranch II (NM-23-00353) & 50/100 & 365; daily = mfr warranty only & $<$40\% BAASOC ceiling  \\
+\addlinespace
+Four Mile Mesa / Star Light / Windy Lane (NM-25-00048) & 68--100 & 365; 2/day & $<$50\% avg ceiling; min 3\% for $\leq$1 hr \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Part 2: Simulating optimal dispatch}
+Simulate optimal dispatch under five regimes, given the \textit{same} expectations around future prices and physical degradation costs:
+\vspace{0.2cm}
+\begin{itemize}
+    \item \textbf{Unconstrained}: physical degradation costs only (calibrated from Xu et al., 2018)
+    \item \textbf{2-cycle-per-day limit}
+    \item \textbf{Annual throughput cap} equivalent to 365 cycles
+    \item \textbf{SOC ceiling ($<50\%$)}
+    \item \textbf{SOC floor ($>51\%$)}
+\end{itemize}
+
+\vspace{0.3cm}
+Produces \textit{upper-bound} estimate of profit loss attributable to each type of restriction
+
+\begin{itemize}
+    \item In the future: compare to socially-optimal dispatch? (peak load reduction, fossil emissions)
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}{A very simple dispatch model...}
+
+\begin{itemize}
+    \item At the start of hour $h$, the battery commits a dispatch quantity (MW) based on their expectation of future price $p_h$
+    \item The committed quantity clears at the realized $p_h$
+    \item These batteries are basically self-scheduled batteries in ERCOT
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Model setup}
+\textbf{Choice and state variables:}
+\begin{itemize}
+    \item $g_h \geq 0$: discharge quantity; $\;l_h \geq 0$: charge quantity; $\;g_h \cdot l_h = 0$
+    \item $s_h \in [0, k]$: state of charge 
+    \item $p_h$: settlement-point price
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{SoC dynamics} with round-trip efficiency $\delta = 0.85$ (guaranteed by warranties):
+\[
+s_{h+1} = s_h - g_h + \delta\, l_h
+\]
+
+\textbf{Per-period profit} with per-MWh cycling cost $c/k$:
+\[
+\pi_h = (g_h - l_h)\,p_h \;-\; \frac{c\,g_h}{k}
+\]
+\begin{itemize}
+    \item Cycling cost: calibrate to physical degradation experiments
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Model setup}
+
+
+\textbf{AR(1) price beliefs:}
+\[
+\bar p_h \;\equiv\; \mathbb{E}[p_h\mid p_{h-1}] \;=\; \theta_h\, (p_{h-1} - p_{\text{DAM}, h-1}) + \phi_h p_{\text{DAM}} + \mu_h.
+\], iid normal errors.
+
+\vspace{0.2cm}
+\textbf{Bellman equation}: 
+\begin{align*}
+    V_h(s_h, p_{h-1}) =  \max_{g_h,\,l_h}\Big\{(&g_h - l_h)\,\bar p_h - \tfrac{c\,g_h}{k} + \\ &\mathbb{E}[ V_{h+1}(s_h - g_h + \delta l_h,\, p_{h-1}) | p_{h-1}]\Big\}
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Future steps / requested feedback}
+    \begin{itemize}
+        \item Continuing to scrape more PPAs/ESAs for operational restrictions
+        \begin{itemize}
+            \item Acquiring more flexible/complicated operational terms from energy solution companies
+        \end{itemize}
+        \item Adding various different constraints/regimes to dispatch simulation model
+        \item How to pitch the economics of this research question?
+    \end{itemize}
+\end{frame}
+
+
+\end{document}
