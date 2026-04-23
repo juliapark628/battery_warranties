@@ -39,47 +39,6 @@
 \end{frame}
 
 
-\begin{frame}{Policy relevance (1): Capacity accreditation}
-\begin{itemize}
-    \item Capacity markets and resource-adequacy programs \textbf{derate} nameplate capacity based on what a resource can reliably deliver in critical hours
-    \begin{itemize}
-        \item FERC Order 841 requires accreditation methods to allow such a derate for ESRs
-        \item Most ISOs impose duration requirements (e.g., ISO-NE: 2 sustained hours; MISO and CAISO: 4) or probabilistic metrics (ELCC in PJM, SPP)
-    \end{itemize}
-    \pause
-    \item For storage, accreditation is fundamentally about \textit{operational assumptions} \\
-    \textcolor{gray}{\small Singhal et al.\ (2024), \S4.4.6: ``difficult to quantify their contribution without making operational assumptions and simulating the operational time frame of those critical periods''}
-    \begin{itemize}
-        \item Minimum SOC floors limit dischargeable energy
-        \item Round-trip efficiency and degradation erode available capacity
-    \end{itemize}
-    \pause
-    \item If contract/warranty restrictions systematically bind during critical hours, nameplate-based accreditation \textbf{overstates} true capacity contribution
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}{Policy relevance (2): Reference levels and market power}
-\begin{itemize}
-    \item ISOs mitigate market power by comparing offers to a \textbf{reference level} --- an estimate of short-run marginal cost
-    \item For energy-limited resources, SRMC is mostly \textit{opportunity cost}, which is hard to estimate:
-    \begin{itemize}
-        \item CAISO: expected energy + variable O\&M + opportunity cost, with a 10\% adder
-        \item ERCOT: mitigated offer caps based on adjusted prior prices at the resource's location
-        \item NYISO: rolling 30-day LBMP-based dynamic opportunity cost \\
-        \textcolor{gray}{\small (Singhal et al.\ 2024, \S4.4.4)}
-    \end{itemize}
-    \pause
-    \item A high battery offer during scarcity could reflect either:
-    \begin{enumerate}
-        \item Legitimate opportunity costs driven by cycle/SOC constraints, or
-        \item Exercise of market power (energy withholding)
-    \end{enumerate}
-    \item Current reference-level methods do not cleanly distinguish these \\
-    \textcolor{gray}{\small Singhal et al.\ (2024) call for reference levels to incorporate ``the impact of excessive cycling on battery storage warranties, through the incorporation of opportunity cost adders''}
-\end{itemize}
-\end{frame}
-
 
 \begin{frame}{Roadmap}
     \begin{enumerate}
@@ -98,7 +57,7 @@
     \item \textbf{Performance Warranties}: guarantee from battery manufacturer that the storage system will maintain specific performance standards over 15-20 years, if battery is operated within certain constraints
     \item \textbf{Power Purchase Agreements (PPAs) / Energy Storage Agreement (ESAs)}: financial agreement to purchase power between operator and offtaker. 
     \begin{itemize}
-        \item These days, the operational restrictions from these are usually harmonized (although interviews have told me that in the past that wasn't always the case...)
+        \item These days, the operational restrictions embedded in PPAs is usually directly inherited from Performance Warranties.
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -126,14 +85,33 @@ Reasons for change:
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Policy relevance: Reference levels and market power}
+\begin{itemize}
+    \item ISOs identify market power by comparing energy offers to a \textbf{reference level} --- an estimate of short-run marginal cost
+    \item For batteries, SRMC is mostly \textit{opportunity cost}, which is hard to estimate:
+    \begin{itemize}
+        \item CAISO: expected energy + variable O\&M + opportunity cost, with a 10\% adder
+        \item ERCOT: mitigated offer caps based on adjusted prior prices at the resource's location
+        \item NYISO: rolling 30-day LBMP-based dynamic opportunity cost
+    \end{itemize}
+    \pause
+    \item A high battery offer during scarcity could reflect either:
+    \begin{enumerate}
+        \item Legitimate opportunity costs driven by cycle/SOC constraints, or
+        \item Exercise of market power (energy withholding)
+    \end{enumerate}
+    \item Current reference-level methods do not cleanly distinguish these 
+
+\end{itemize}
+\end{frame}
+
+
 \section{Literature Review and Positioning}
 
 \begin{frame}{Literature and Contribution}
 \begin{itemize}
     \item \textbf{Electricity storage arbitrage}: Optimal battery dispatch, effects on market prices, frictions preventing storage from realizing theoretical value \\
     \textcolor{gray}{\small Butters, Dorsey, and Gowrisankaran (2025); Lamp and Samano (2022); Reynolds (2025); Denholm and Margolis (2018)}
-    \item \textbf{Contract theory and warranties}: Warranty design under asymmetric information, moral hazard, and risk allocation in bilateral contracting \\
-    \textcolor{gray}{\small Emons (1988); Emons (1989); Liu and Wang (2025)}
     \item \textbf{Battery degradation}: Engineering foundation relating operational behavior (DoD, C-rate, SOC, cycles) to capacity loss \\
     \textcolor{gray}{\small Xu et al.\ (2018); Attia et al.\ (2022)}
 \end{itemize}
@@ -156,6 +134,7 @@ Reasons for change:
     \begin{itemize}
         \item \textit{Why New Mexico?} tends to most often have unredacted ESA contract language
         \item \textit{Why Texas?} Any ESA can be linked to granular public data on the individual battery's individual bids and dispatch behavior -- can be useful later on...
+        \item Hope to scrape California and New York eventually
     \end{itemize}
     \item So far managed to scrape restrictions from \textbf{11 dockets}, covering \textbf{16 battery projects} filed between 2021 and 2025
 \end{itemize}
@@ -192,7 +171,7 @@ TAG Energy (NM-23-00251) & 50 & 365 hard cap & Manufacturer bounds only; no avg 
 \addlinespace
 Quail Ranch (NM-23-00353) & 100 & 365; 2/day & $<$60\% avg ceiling; $>$30\% at rest ($>$3 mo.)  \\
 \addlinespace
-Route 66 / Sky Ranch II (NM-23-00353) & 50/100 & 365; daily = mfr warranty only & $<$40\% BAASOC ceiling  \\
+Route 66 / Sky Ranch II (NM-23-00353) & 50/100 & 365 & $<$40\% BAASOC ceiling  \\
 \addlinespace
 Four Mile Mesa / Star Light / Windy Lane (NM-25-00048) & 68--100 & 365; 2/day & $<$50\% avg ceiling; min 3\% for $\leq$1 hr \\
 \bottomrule
@@ -204,17 +183,17 @@ Simulate optimal dispatch under five regimes, given the \textit{same} expectatio
 \vspace{0.2cm}
 \begin{itemize}
     \item \textbf{Unconstrained}: physical degradation costs only (calibrated from Xu et al., 2018)
-    \item \textbf{2-cycle-per-day limit}
-    \item \textbf{Annual throughput cap} equivalent to 365 cycles
-    \item \textbf{SOC ceiling ($<50\%$)}
-    \item \textbf{SOC floor ($>51\%$)}
+    \item \textbf{1-cycle-per-day limit}
+    \item \textit{Annual throughput cap} equivalent to 365 cycles
+    \item \textit{SOC ceiling ($<50\%$)}
+    \item \textit{SOC floor ($>51\%$)}
 \end{itemize}
 
 \vspace{0.3cm}
 Produces \textit{upper-bound} estimate of profit loss attributable to each type of restriction
 
 \begin{itemize}
-    \item In the future: compare to socially-optimal dispatch? (peak load reduction, fossil emissions)
+    \item In the future: compare to socially-optimal dispatch? (peak load reduction, emission reduction)
 \end{itemize}
 
 \end{frame}
@@ -275,10 +254,10 @@ s_{h+1} = s_h - g_h + \delta\, l_h
     \begin{itemize}
         \item Continuing to scrape more PPAs/ESAs for operational restrictions
         \begin{itemize}
+            \item Acquiring older operational terms
             \item Acquiring more flexible/complicated operational terms from energy solution companies
         \end{itemize}
         \item Adding various different constraints/regimes to dispatch simulation model
-        \item How to pitch the economics of this research question?
     \end{itemize}
 \end{frame}
 
