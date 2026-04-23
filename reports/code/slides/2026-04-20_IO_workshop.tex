@@ -7,9 +7,9 @@
 
 
 %Information to be included in the title page:
-\title{Grid-Scale Battery Dispatch Distortions \\ Due to Manufacturer Warranties}
+\title{Grid-Scale Battery Dispatch Distortions \\ Due to Operational Restrictions}
 \author{Julia Park}
-\date{IO Workshop \\ April 20, 2026}
+\date{April 20, 2026}
 
 \begin{document}
 
@@ -56,7 +56,7 @@
     \item \textbf{Performance Warranties}: guarantee from battery manufacturer that the storage system will maintain specific performance standards over 15-20 years, if battery is operated within certain constraints
     \item \textbf{Power Purchase Agreements (PPAs) / Energy Storage Agreement (ESAs)}: financial agreement to purchase power between operator and offtaker. 
     \begin{itemize}
-        \item These days, the operational restrictions from these are usually harmonized (although interviews have told me that in the past that wasn't always the case...)
+        \item These days, the operational restrictions from these are usually harmonized 
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -72,7 +72,7 @@ Restrictions imposed on battery operation to prevent degradation:
 \end{frame}
 
 \begin{frame}{Context: Trends in battery warranties}
-The industry has been interested in how to design these operational restrictions such that they are less \textbf{restrictive}  (e.g. limits on number of cycles) and more \textbf{flexible} warranties (e.g. rolling averages, charge/discharge rates over the day).
+The industry has been interested in how to design these operational restrictions such that they are  \textbf{less restrictive}  (e.g. limits on number of cycles) and  \textbf{more flexible} (e.g. rolling averages, charge/discharge rates over the day).
 
 \vspace{0.3cm}
 Reasons for change:
@@ -88,16 +88,15 @@ Reasons for change:
 
 \begin{frame}{Literature and Contribution}
 \begin{itemize}
-    \item \textbf{Electricity storage arbitrage}: Optimal battery dispatch, effects on market prices, frictions preventing storage from realizing theoretical value \\
-    \textcolor{gray}{\small Butters, Dorsey, and Gowrisankaran (2025); Lamp and Samano (2022); Reynolds (2025); Denholm and Margolis (2018)}
-    \item \textbf{Contract theory and warranties}: Warranty design under asymmetric information, moral hazard, and risk allocation in bilateral contracting \\
-    \textcolor{gray}{\small Emons (1988); Emons (1989); Liu and Wang (2025)}
-    \item \textbf{Battery degradation}: Engineering foundation relating operational behavior (DoD, C-rate, SOC, cycles) to capacity loss \\
-    \textcolor{gray}{\small Xu et al.\ (2018); Attia et al.\ (2022)}
+    \item \textbf{Electricity storage arbitrage}: Optimal battery dispatch, effects on market prices, frictions preventing storage from realizing theoretical value \textcolor{gray}{\small Butters, Dorsey, and Gowrisankaran (2025); Lamp and Samano (2022); Reynolds (2025); Denholm and Margolis (2018)}
+    \item \textbf{Battery warranty design}: \textcolor{gray}{\small  Liu and Wang (2025)}
+    \item \textbf{Battery degradation}: Engineering foundation relating operational behavior (DoD, C-rate, SOC, cycles) to capacity loss \textcolor{gray}{\small Xu et al.\ (2018); Attia et al.\ (2022)}
 \end{itemize}
 \textbf{Contribution}: 
 \begin{itemize}
-    \item first to document operational restrictions embedded in grid-scale battery warranties \item simulate profit cost of different contract designs
+    \item Document specific operational restrictions embedded in grid-scale battery contracts
+    \item Simulate dispatch behavior under different contract designs
+\end{itemize}
 \end{frame}
 
 
@@ -191,7 +190,7 @@ Produces \textit{upper-bound} estimate of profit loss attributable to each type 
 \textbf{Choice and state variables:}
 \begin{itemize}
     \item $g_h \geq 0$: discharge quantity; $\;l_h \geq 0$: charge quantity; $\;g_h \cdot l_h = 0$
-    \item $s_h \in [0, k]$: state of charge 
+    \item $s_h \in [0, k]$: state of charge, with upper bound capacity $k$ (MWh)
     \item $p_h$: settlement-point price
 \end{itemize}
 
