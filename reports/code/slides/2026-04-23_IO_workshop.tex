@@ -57,7 +57,7 @@
     \item \textbf{Performance Warranties}: guarantee from battery manufacturer that the storage system will maintain specific performance standards over 15-20 years, if battery is operated within certain constraints
     \item \textbf{Power Purchase Agreements (PPAs) / Energy Storage Agreement (ESAs)}: financial agreement to purchase power between operator and offtaker. 
     \begin{itemize}
-        \item These days, the operational restrictions embedded in PPAs is usually directly inherited from Performance Warranties.
+        \item These days, the operational restrictions embedded in PPAs are usually directly inherited from Performance Warranties.
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -68,12 +68,12 @@
 Restrictions imposed on battery operation to prevent degradation:
 \begin{itemize}
     \item \textbf{Cycle frequency limits}: cap on full charge-discharge cycles per day or per year (typically clustered around 1--1.5 cycles/day)
-    \item \textbf{State-of-charge requirements}: constrain annual average SOC, commonly below or above 50\%
+    \item \textbf{Average state-of-charge requirements}: constrain annual average SOC, commonly below or above 50\%
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Context: Trends in battery warranties}
-The industry has been interested in how to design these operational restrictions such that they are less \textbf{restrictive}  (e.g. limits on number of cycles) and more \textbf{flexible} warranties (e.g. rolling averages, charge/discharge rates over the day).
+The industry has been interested in how to design these operational restrictions such that they are less \textbf{restrictive}  (e.g. limits on daily number of cycles) and more \textbf{flexible} warranties (e.g. rolling SoC averages, annual throughput, etc.).
 
 \vspace{0.3cm}
 Reasons for change:
@@ -142,40 +142,48 @@ Reasons for change:
 
 \begin{frame}{Texas: Operational Restrictions Across Dockets}
 \footnotesize
-\begin{tabular}{p{3.5cm} p{0.9cm} p{2.0cm} p{2.5cm}}
+\begin{tabular}{p{5cm} p{1.4cm} p{3.0cm} p{3.5cm}}
 \toprule
 \textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} \\
 \midrule
-Wildcat Ranch BESS (TX-57244) & 48 & 250 cap; excess to ${\sim}$365 at add'l charge & $<$50\% avg ceiling \\
+Wildcat Ranch BESS (TX-57244) & 48 & 250; up to 365 at add'l charge & $<$50\% avg ceiling \\
 \addlinespace
-Carne ESA (TX-57760) & 65 & 340 cap; 2/day & $<$60\% avg ceiling; $<$20\% at rest \\
+Carne ESA (TX-57760) & 65 & 340; 2/day & $<$60\% avg ceiling \\
 \addlinespace
-Lorenzo/Chaves/ Roswell BESSes (TX-59034) & 50 ea. & 365; 5\%/day & $>$51\% avg \textit{floor}\\
+Lorenzo/Chaves/ Roswell BESSes (TX-59034) & 50 ea. & 365 & $>$51\% avg \textit{floor}\\
 \addlinespace
-Wildcat Ranch II / Palo Duro / Mammoth Plains (TX-59034) & 120--150 & 365; 5\%/day & $>$51\% avg \textit{floor} \\
+Wildcat Ranch II / Palo Duro / Mammoth Plains (TX-59034) & 120--150 & 365 & $>$51\% avg \textit{floor} \\
 \bottomrule
 \end{tabular}
+
+\vspace{0.3cm}
+Note: 1 cycle = when total discharge equals the MWh capacity, regardless of depth of discharge or number of partial charges/discharges
 
 
 \end{frame}
 
 \begin{frame}{New Mexico: Operational Restrictions Across Dockets}
 \footnotesize
-\begin{tabular}{p{3.5cm} p{0.8cm} p{1.9cm} p{3cm}}
+\begin{tabular}{p{5cm} p{1.4cm} p{3.0cm} p{3.5cm}}
 \toprule
 \textbf{Project} & \textbf{MW} & \textbf{Annual cycles} & \textbf{SOC constraint} \\
 \midrule
-Sky Ranch (NM-21-00031) & 100 & 365; optional to 535 & $<$40\% BAASOC ceiling; penalty: $-$5 cycles  \\
+Sky Ranch (NM-21-00031) & 100 & 365; up to 535 at add'l charge & $<$40\% avg ceiling  \\
 \addlinespace
-TAG Energy (NM-23-00251) & 50 & 365 hard cap & Manufacturer bounds only; no avg ceiling  \\
+TAG Energy (NM-23-00251) & 50 & 365 & N/A \\
 \addlinespace
-Quail Ranch (NM-23-00353) & 100 & 365; 2/day & $<$60\% avg ceiling; $>$30\% at rest ($>$3 mo.)  \\
+Quail Ranch (NM-23-00353) & 100 & 365; 2/day & $<$60\% avg ceiling \\
 \addlinespace
-Route 66 / Sky Ranch II (NM-23-00353) & 50/100 & 365 & $<$40\% BAASOC ceiling  \\
+Route 66 / Sky Ranch II (NM-23-00353) & 50/100 & 365 & $<$40\% avg ceiling  \\
 \addlinespace
-Four Mile Mesa / Star Light / Windy Lane (NM-25-00048) & 68--100 & 365; 2/day & $<$50\% avg ceiling; min 3\% for $\leq$1 hr \\
+Four Mile Mesa / Star Light / Windy Lane (NM-25-00048) & 68--100 & 365; 2/day & $<$50\% avg ceiling \\
 \bottomrule
 \end{tabular}
+
+\vspace{0.3cm}
+Note: 1 cycle = when total discharge equals the MWh capacity, regardless of depth of discharge or number of partial charges/discharges
+
+
 \end{frame}
 
 \begin{frame}{Part 2: Simulating optimal dispatch}
@@ -185,13 +193,12 @@ Simulate \textit{ex-post} optimal dispatch under each warranty regime, taking re
     \item \textbf{Unconstrained}: physical degradation costs only (calibrated from Xu et al., 2018)
     \item \textbf{Daily cycle cap} (1--2 cycles/day)
     \item \textbf{Annual cycle cap} (e.g., 365 cycles/year)
-    \item \textbf{Avg SoC ceiling} ($<$50\% or $<$40\% BAASOC)
+    \item \textbf{Avg SoC ceiling} ($<$50\%)
     \item \textbf{Avg SoC floor} ($>$51\%)
-    \item \textbf{Per-contract bundles}: actual combined restrictions from each scraped ESA
 \end{itemize}
 
 \vspace{0.3cm}
-Under perfect foresight, yields \textit{upper-bound} estimate of profit loss attributable to each restriction (or restriction bundle).
+Under perfect foresight, yields \textit{upper-bound} estimate of profit loss attributable to each restriction.
 \end{frame}
 
 
@@ -248,9 +255,6 @@ s_{h+1} = s_h - g_h + \delta\, l_h
     \item \textit{Avg SoC floor ($\alpha$)}: $\sum_{h} s_h \geq \alpha \cdot k \cdot H$
 \end{itemize}
 
-\vspace{0.1cm}
-\footnotesize
-Solve per regime (and per-contract bundles) on realized ERCOT prices; compare profit, cycles/day, and hour-of-day dispatch.
 \end{frame}
 
 \begin{frame}{Future steps / requested feedback}
@@ -260,9 +264,8 @@ Solve per regime (and per-contract bundles) on realized ERCOT prices; compare pr
             \item Acquiring older operational terms
             \item Acquiring more flexible/complicated operational terms from energy solution companies
         \end{itemize}
-        \item Per-project profit-loss rankings across the 16 scraped contracts
-        \item Modeling ``at-rest'' SoC constraints (MILP extension)
-        \item Comparing simulated optimal dispatch to observed ERCOT dispatch / bids
+        \item Comparing simulated optimal dispatch to observed ERCOT dispatch
+        \item Simulating to ex-ante bidding behavior
     \end{itemize}
 \end{frame}
 
