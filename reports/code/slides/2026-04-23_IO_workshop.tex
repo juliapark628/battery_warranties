@@ -1,4 +1,4 @@
-\documentclass{beamer}
+\documentclass[aspectratio=169]{beamer}
 \usepackage{bbm}
 \usepackage{booktabs}
 \usepackage{array}
@@ -179,43 +179,40 @@ Four Mile Mesa / Star Light / Windy Lane (NM-25-00048) & 68--100 & 365; 2/day & 
 \end{frame}
 
 \begin{frame}{Part 2: Simulating optimal dispatch}
-Simulate optimal dispatch under five regimes, given the \textit{same} expectations around future prices and physical degradation costs:
+Simulate \textit{ex-post} optimal dispatch under each warranty regime, taking realized prices and physical degradation costs as given:
 \vspace{0.2cm}
 \begin{itemize}
     \item \textbf{Unconstrained}: physical degradation costs only (calibrated from Xu et al., 2018)
-    \item \textbf{1-cycle-per-day limit}
-    \item \textit{Annual throughput cap} equivalent to 365 cycles
-    \item \textit{SOC ceiling ($<50\%$)}
-    \item \textit{SOC floor ($>51\%$)}
+    \item \textbf{Daily cycle cap} (1--2 cycles/day)
+    \item \textbf{Annual cycle cap} (e.g., 365 cycles/year)
+    \item \textbf{Avg SoC ceiling} ($<$50\% or $<$40\% BAASOC)
+    \item \textbf{Avg SoC floor} ($>$51\%)
+    \item \textbf{Per-contract bundles}: actual combined restrictions from each scraped ESA
 \end{itemize}
 
 \vspace{0.3cm}
-Produces \textit{upper-bound} estimate of profit loss attributable to each type of restriction
-
-\begin{itemize}
-    \item In the future: compare to socially-optimal dispatch? (peak load reduction, emission reduction)
-\end{itemize}
-
+Under perfect foresight, yields \textit{upper-bound} estimate of profit loss attributable to each restriction (or restriction bundle).
 \end{frame}
 
 
 
 
-\begin{frame}{A very simple dispatch model...}
+\begin{frame}{A simple ex-post dispatch model...}
 
 \begin{itemize}
-    \item At the start of hour $h$, the battery commits a dispatch quantity (MW) based on their expectation of future price $p_h$
-    \item The committed quantity clears at the realized $p_h$
-    \item These batteries are basically self-scheduled batteries in ERCOT
+    \item Given a realized hourly price path $\{p_h\}_{h=1}^{H}$ over a one-year horizon, choose a dispatch schedule $\{g_h, l_h\}$ to maximize profit net of cycling cost
+    \item Perfect-foresight / ex-post: yields an \textit{upper-bound} on what a profit-maximizing self-scheduled battery could have earned
+    \item For each warranty regime, solve a single linear program; compare profits and dispatch patterns across regimes
+    \item Closest real-world analog: self-scheduled batteries in ERCOT
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Model setup}
 \textbf{Choice and state variables:}
 \begin{itemize}
-    \item $g_h \geq 0$: discharge quantity; $\;l_h \geq 0$: charge quantity; $\;g_h \cdot l_h = 0$
-    \item $s_h \in [0, k]$: state of charge 
-    \item $p_h$: settlement-point price
+    \item $g_h \geq 0$: discharge in hour $h$ (MWh); $\;l_h \geq 0$: charge (MWh); $\;g_h \cdot l_h = 0$
+    \item $s_h \in [0, k]$: state of charge; $k$ = energy capacity (MWh)
+    \item $p_h$: realized settlement-point price (\$/MWh)
 \end{itemize}
 
 \vspace{0.2cm}
@@ -229,25 +226,31 @@ s_{h+1} = s_h - g_h + \delta\, l_h
 \pi_h = (g_h - l_h)\,p_h \;-\; \frac{c\,g_h}{k}
 \]
 \begin{itemize}
-    \item Cycling cost: calibrate to physical degradation experiments
+    \item Cycling cost: calibrate to physical degradation (Xu et al.\ 2018)
 \end{itemize}
-
 \end{frame}
 
-\begin{frame}{Model setup}
-
-
-\textbf{AR(1) price beliefs:}
+\begin{frame}{Dispatch LP under warranty regimes}
+\textbf{Unconstrained LP}
 \[
-\bar p_h \;\equiv\; \mathbb{E}[p_h\mid p_{h-1}] \;=\; \theta_h\, (p_{h-1} - p_{\text{DAM}, h-1}) + \phi_h p_{\text{DAM}} + \mu_h.
-\], iid normal errors.
+\max_{\{g_h,\, l_h\}} \sum_{h=1}^{H} \left[(g_h - l_h)\,p_h \;-\; \tfrac{c}{k}\,g_h\right]
+\]
+\[
+\text{s.t. } s_{h+1} = s_h - g_h + \delta\, l_h,\quad 0 \leq s_h \leq k,\quad 0 \leq g_h, l_h \leq P
+\]
 
-\vspace{0.2cm}
-\textbf{Bellman equation}: 
-\begin{align*}
-    V_h(s_h, p_{h-1}) =  \max_{g_h,\,l_h}\Big\{(&g_h - l_h)\,\bar p_h - \tfrac{c\,g_h}{k} + \\ &\mathbb{E}[ V_{h+1}(s_h - g_h + \delta l_h,\, p_{h-1}) | p_{h-1}]\Big\}
-\end{align*}
+\vspace{0.1cm}
+\textbf{Warranty regimes}: add one or more linear constraints
+\begin{itemize}
+    \item \textit{Daily cycle cap}: $\sum_{h \in d} g_h \leq k \quad \forall\,d$
+    \item \textit{Annual cycle cap}: $\sum_{h=1}^{H} g_h \leq N_{\text{ann}} \cdot k$
+    \item \textit{Avg SoC ceiling ($\alpha$)}: $\sum_{h} s_h \leq \alpha \cdot k \cdot H$
+    \item \textit{Avg SoC floor ($\alpha$)}: $\sum_{h} s_h \geq \alpha \cdot k \cdot H$
+\end{itemize}
 
+\vspace{0.1cm}
+\footnotesize
+Solve per regime (and per-contract bundles) on realized ERCOT prices; compare profit, cycles/day, and hour-of-day dispatch.
 \end{frame}
 
 \begin{frame}{Future steps / requested feedback}
@@ -257,7 +260,9 @@ s_{h+1} = s_h - g_h + \delta\, l_h
             \item Acquiring older operational terms
             \item Acquiring more flexible/complicated operational terms from energy solution companies
         \end{itemize}
-        \item Adding various different constraints/regimes to dispatch simulation model
+        \item Per-project profit-loss rankings across the 16 scraped contracts
+        \item Modeling ``at-rest'' SoC constraints (MILP extension)
+        \item Comparing simulated optimal dispatch to observed ERCOT dispatch / bids
     \end{itemize}
 \end{frame}
 
